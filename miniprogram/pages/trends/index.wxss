@@ -1,0 +1,173 @@
+.trends-page {
+  padding: 30rpx 24rpx calc(92rpx + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 88% 12%, rgba(255, 122, 16, 0.16), transparent 26%),
+    radial-gradient(circle at 14% 22%, rgba(255, 255, 255, 0.96), transparent 28%),
+    #fff8ef;
+}
+
+.trend-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 260rpx;
+  margin: 12rpx 0 24rpx;
+  overflow: hidden;
+}
+
+.trend-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 430rpx;
+}
+
+.page-title {
+  display: block;
+  color: #1f2733;
+  font-size: 54rpx;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.page-subtitle {
+  display: block;
+  margin-top: 18rpx;
+  color: #5f6470;
+  font-size: 28rpx;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.trend-coach {
+  position: absolute;
+  right: -26rpx;
+  bottom: -22rpx;
+  width: 292rpx;
+  height: 224rpx;
+  filter: drop-shadow(0 22rpx 30rpx rgba(119, 67, 22, 0.16));
+}
+
+.sparkle {
+  position: absolute;
+  z-index: 1;
+  color: #ffad37;
+  font-size: 32rpx;
+  font-weight: 900;
+}
+
+.sparkle-one {
+  right: 218rpx;
+  top: 48rpx;
+}
+
+.sparkle-two {
+  right: 26rpx;
+  top: 148rpx;
+}
+
+.route-card {
+  position: relative;
+  overflow: hidden;
+  padding: 26rpx 22rpx 20rpx;
+  border: 1rpx solid rgba(239, 219, 195, 0.98);
+  border-radius: 34rpx;
+  background: rgba(255, 255, 255, 0.93);
+  box-shadow: 0 18rpx 44rpx rgba(74, 48, 23, 0.08);
+}
+
+.route-card::before {
+  content: "";
+  position: absolute;
+  right: 28rpx;
+  top: 220rpx;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 34rpx;
+  border: 5rpx solid rgba(255, 122, 16, 0.08);
+  transform: rotate(24deg);
+}
+
+.route-head,
+.route-title-wrap,
+.mode-tabs {
+  display: flex;
+  align-items: center;
+}
+
+.route-head {
+  position: relative;
+  z-index: 1;
+  justify-content: flex-start;
+  gap: 14rpx;
+  margin-bottom: 18rpx;
+}
+
+.route-title-wrap {
+  min-width: 0;
+  gap: 14rpx;
+}
+
+.route-icon {
+  color: #ff7a10;
+  font-size: 46rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.route-title {
+  color: #1f2733;
+  font-size: 34rpx;
+  font-weight: 900;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.mode-tabs {
+  position: relative;
+  z-index: 1;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.mode-tabs button {
+  flex: 1;
+  height: 72rpx;
+  margin: 0;
+  padding: 0;
+  border-radius: 24rpx;
+  background: #fff5e8;
+  color: #7b4a24;
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 72rpx;
+}
+
+.mode-tabs button.active {
+  background: linear-gradient(135deg, #ff6b10, #ff8f18);
+  color: #ffffff;
+  box-shadow: 0 12rpx 24rpx rgba(255, 122, 16, 0.18);
+}
+
+.empty-trends {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 40rpx;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  font-weight: 900;
+  color: #202733;
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #7b6957;
+  line-height: 1.5;
+}

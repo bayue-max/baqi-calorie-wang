@@ -1,0 +1,52 @@
+<view class="page">
+  <view class="entry-hero">
+    <view>
+      <text class="page-title">记一餐</text>
+      <text class="page-subtitle">把吃的告诉霸气，热量马上算。</text>
+    </view>
+    <view class="shiba-badge"><view class="shiba-face"></view></view>
+  </view>
+
+  <view class="panel section">
+    <text class="section-title">餐次</text>
+    <view class="segmented">
+      <button class="{{mealType === 'breakfast' ? 'active' : ''}}" data-value="breakfast" bindtap="selectMeal">早餐</button>
+      <button class="{{mealType === 'lunch' ? 'active' : ''}}" data-value="lunch" bindtap="selectMeal">午餐</button>
+      <button class="{{mealType === 'dinner' ? 'active' : ''}}" data-value="dinner" bindtap="selectMeal">晚餐</button>
+      <button class="{{mealType === 'snack' ? 'active' : ''}}" data-value="snack" bindtap="selectMeal">加餐</button>
+    </view>
+  </view>
+
+  <view class="panel section input-panel">
+    <text class="section-title">吃了什么</text>
+    <textarea value="{{rawInput}}" bindinput="updateInput" placeholder="例如：鸡胸肉200g，米饭150g，鸡蛋2个" maxlength="300" />
+    <button bindtap="parse" loading="{{parsing}}">解析预览</button>
+  </view>
+
+  <view class="panel section" wx:if="{{parsedItems.length || failedItems.length}}">
+    <text class="section-title">解析结果</text>
+    <view class="parsed" wx:for="{{parsedItems}}" wx:key="rawSegment">
+      <view>
+        <text class="parsed-name">{{item.name}}</text>
+        <text class="parsed-amount">{{item.amount}}{{item.unit}}（{{item.gramEquivalent}}g）</text>
+      </view>
+      <text class="parsed-calorie">{{item.calories}} kcal</text>
+      <text class="parsed-macro">蛋白质 {{item.protein}}g · 碳水 {{item.carb}}g · 脂肪 {{item.fat}}g</text>
+      <text class="muted" wx:if="{{item.isDefaultAmount}}">默认份量 {{item.gramEquivalent}}g</text>
+      <!-- AI 分解：直接展示食材明细 -->
+      <view wx:if="{{item.fromAI && item.breakdown}}" class="breakdown-wrap">
+        <view wx:for="{{item.breakdown}}" wx:for-item="sub" wx:key="name" class="breakdown-item">
+          <text class="bd-name">{{sub.name}}</text>
+          <text class="bd-amount">{{sub.amount}}{{sub.unit}}</text>
+          <text wx:if="{{sub.estimated}}" class="bd-est">约</text>
+          <text class="bd-cal">{{sub.calories}}kcal</text>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{failedItems.length}}" class="failed">
+      <text>未识别，暂未计入：{{failedText}}</text>
+    </view>
+  </view>
+
+  <button class="primary-button submit-button" bindtap="confirmAdd" loading="{{saving}}">确认添加</button>
+</view>

@@ -1,0 +1,53 @@
+.entry-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8rpx 0 24rpx;
+}
+
+.page-title {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 900;
+}
+
+.page-subtitle {
+  display: block;
+  margin-top: 8rpx;
+  color: #7b6957;
+  font-size: 25rpx;
+}
+
+.segmented,
+.option-grid {
+  display: flex;
+  gap: 12rpx;
+  flex-wrap: wrap;
+}
+
+.segmented button,
+.option-grid button {
+  min-width: 150rpx;
+  margin: 0;
+  font-size: 26rpx;
+  background: #fff7ec;
+}
+
+button.active {
+  background: #f28c28;
+  color: #ffffff;
+}
+
+input {
+  height: 76rpx;
+  padding: 0 20rpx;
+  background: #fffaf2;
+  border: 1rpx solid #f0dfc9;
+  border-radius: 14rpx;
+  font-size: 30rpx;
+}
+
+.submit-button {
+  height: 88rpx;
+  font-size: 30rpx;
+}

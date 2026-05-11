@@ -1,0 +1,62 @@
+<view class="page legal-page">
+  <view class="legal-hero">
+    <text class="legal-title">隐私政策</text>
+    <text class="legal-subtitle">我们重视你的个人信息保护。本政策说明霸气卡路汪如何收集、使用、保存和保护你的信息。</text>
+    <text class="legal-date">更新日期：2026年5月3日</text>
+  </view>
+
+  <view class="legal-card">
+    <view class="section">
+      <text class="section-title">一、我们收集的信息</text>
+      <text class="paragraph">为提供热量记录服务，我们可能收集你主动填写或使用过程中产生的信息，包括昵称、头像、性别、年龄、身高、体重、目标计划、饮食记录、运动记录、热量计划、三大营养素目标和趋势统计数据。</text>
+      <text class="paragraph">当你使用微信登录时，我们会使用微信小程序登录能力识别你的用户身份，用于创建账号、保存记录和同步数据。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">二、我们如何使用信息</text>
+      <text class="paragraph">我们使用上述信息用于登录识别、资料卡展示、热量计划计算、饮食解析、运动消耗记录、今日进度、趋势统计和记录管理。</text>
+      <text class="paragraph">我们不会将你的个人信息用于与本小程序功能无关的广告投放、画像营销或未经你同意的第三方共享。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">三、信息保存和同步</text>
+      <text class="paragraph">在云端模式下，你的账号资料、饮食记录和运动记录会保存于微信云开发环境，用于跨次访问时读取和展示。</text>
+      <text class="paragraph">清理小程序缓存、切换设备或重新登录可能影响部分本地临时状态，但不会主动改变已保存的云端账号数据。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">四、我们如何保护信息</text>
+      <text class="paragraph">我们会尽量采用合理的技术和管理措施保护你的信息，例如通过微信云开发能力进行数据访问、按功能需要调用云函数，并避免在页面中展示不必要的敏感信息。</text>
+      <text class="paragraph">互联网环境无法保证绝对安全。如发生可能影响你权益的信息安全事件，我们会尽力按照平台规则和法律法规要求处理。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">五、你如何管理信息</text>
+      <text class="paragraph">你可以在资料卡中修改昵称、性别、年龄、身高、体重和目标计划。你可以在今日记录中删除饮食或运动明细。</text>
+      <text class="paragraph">如你希望进一步查询、更正或删除账号相关信息，可以通过小程序内反馈入口或开发者提供的联系方式与我们联系。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">六、未成年人和特殊人群</text>
+      <text class="paragraph">本小程序主要面向具备独立理解和管理自身饮食记录能力的用户。未成年人使用前应取得监护人同意，并在监护人指导下使用。</text>
+      <text class="paragraph">如你属于孕期、哺乳期、疾病治疗期或有特殊饮食需求的人群，请优先咨询医生、营养师或其他专业人士。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">七、第三方能力</text>
+      <text class="paragraph">本小程序可能使用微信登录、微信云开发、微信小程序运行环境等平台能力。上述能力的隐私保护规则还应以微信平台相关规则为准。</text>
+      <text class="paragraph">如后续新增需要单独授权的能力，我们会在使用前按照微信小程序规范向你说明用途，并在获得授权后使用。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">八、政策更新</text>
+      <text class="paragraph">我们可能根据产品功能、平台要求或法律法规更新本政策。更新后会在小程序内展示新的版本。</text>
+      <text class="paragraph">如果更新涉及个人信息处理方式的重大变化，我们会尽量以合理方式提醒你。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">九、联系我们</text>
+      <text class="paragraph">如果你对本隐私政策或个人信息处理有疑问，可以通过小程序内反馈入口或开发者提供的联系方式与我们联系。</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,51 @@
+<view class="page profile-page" wx:if="{{!loading}}">
+  <view class="profile-card">
+    <view class="profile-copy">
+      <text class="profile-name">{{user.nickname}}</text>
+      <text class="profile-subtitle">霸气按目标盯进度</text>
+      <view class="profile-tags">
+        <text class="tag-goal">{{display.goal}}</text>
+        <text>{{user.weight}}kg</text>
+        <text>{{user.height}}cm</text>
+      </view>
+      <view class="profile-meta">
+        <text>性别：{{display.gender}}</text>
+        <text></text>
+        <text>年龄：{{user.age}}</text>
+      </view>
+    </view>
+    <view class="profile-visual">
+      <image class="profile-coach" src="/assets/coach/coach-waist.png" mode="aspectFit"></image>
+    </view>
+  </view>
+
+  <view class="plan-card" wx:if="{{plan}}">
+    <text class="plan-title">热量计划</text>
+    <view class="plan-main">
+      <text>建议摄入</text>
+      <text>{{plan.targetCalories}} kcal</text>
+    </view>
+    <view class="plan-grid">
+      <view><text>基础代谢</text><text>{{plan.bmr}} kcal</text></view>
+      <view><text>日常活动</text><text>{{plan.habitBurn}} kcal</text></view>
+      <view><text>目标调整</text><text>{{plan.calorieAdjustment}} kcal</text></view>
+    </view>
+    <view class="macro-plan">
+      <view class="macro-row protein-row">
+        <view class="macro-left"><text class="macro-icon">P</text><text class="macro-name">蛋白质：{{plan.proteinTarget}}g</text><text class="macro-note">（{{display.proteinNote}}）</text></view>
+      </view>
+      <view class="macro-row carb-row">
+        <view class="macro-left"><text class="macro-icon">C</text><text class="macro-name">碳水：{{plan.carbTarget}}g</text><text class="macro-note">（{{display.carbNote}}）</text></view>
+      </view>
+      <view class="macro-row fat-row">
+        <view class="macro-left"><text class="macro-icon">F</text><text class="macro-name">脂肪：{{plan.fatTarget}}g</text><text class="macro-note">（{{display.fatNote}}）</text></view>
+      </view>
+    </view>
+  </view>
+
+  <button class="primary-button edit-button" bindtap="edit">
+    <text class="edit-icon">▣</text>
+    <text>修改资料</text>
+  </button>
+  <text class="profile-footer">每一次更新，都是更好的自己！</text>
+</view>

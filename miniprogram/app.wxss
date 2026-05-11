@@ -1,0 +1,144 @@
+page {
+  min-height: 100%;
+  background: #fff8ef;
+  color: #1f2733;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 28rpx 24rpx 36rpx;
+  box-sizing: border-box;
+}
+
+.section {
+  margin-bottom: 22rpx;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1rpx solid rgba(239, 219, 195, 0.96);
+  border-radius: 30rpx;
+  padding: 24rpx;
+  box-shadow: 0 18rpx 40rpx rgba(74, 48, 23, 0.07);
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #ff7a10, #ff8f18);
+  color: #ffffff;
+  border-radius: 28rpx;
+  font-weight: 900;
+  box-shadow: 0 16rpx 30rpx rgba(255, 122, 16, 0.2);
+}
+
+button {
+  border-radius: 24rpx;
+  color: #1f2733;
+  background: rgba(255, 250, 242, 0.9);
+  font-weight: 800;
+}
+
+button::after {
+  border: 0;
+}
+
+.muted {
+  color: #7d828a;
+}
+
+.section-title {
+  display: block;
+  margin-bottom: 16rpx;
+  font-size: 32rpx;
+  font-weight: 900;
+  color: #1f2733;
+}
+
+.coach-chip {
+  display: inline-block;
+  padding: 8rpx 14rpx;
+  border-radius: 999rpx;
+  background: #1f2733;
+  color: #fff8ef;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.shiba-badge {
+  position: relative;
+  width: 82rpx;
+  height: 82rpx;
+  border-radius: 28rpx;
+  background: #f6a23a;
+  box-shadow: inset 0 -8rpx 0 rgba(125, 75, 23, 0.13);
+}
+
+.shiba-badge::before,
+.shiba-badge::after {
+  content: "";
+  position: absolute;
+  top: -12rpx;
+  width: 0;
+  height: 0;
+  border-left: 16rpx solid transparent;
+  border-right: 16rpx solid transparent;
+  border-bottom: 28rpx solid #f6a23a;
+}
+
+.shiba-badge::before {
+  left: 12rpx;
+  transform: rotate(-18deg);
+}
+
+.shiba-badge::after {
+  right: 12rpx;
+  transform: rotate(18deg);
+}
+
+.shiba-face {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44rpx;
+  height: 34rpx;
+  transform: translate(-50%, -42%);
+  border-radius: 0 0 22rpx 22rpx;
+  background: #fff7ec;
+}
+
+.shiba-face::before,
+.shiba-face::after {
+  content: "";
+  position: absolute;
+  top: -8rpx;
+  width: 7rpx;
+  height: 7rpx;
+  border-radius: 50%;
+  background: #202733;
+}
+
+.shiba-face::before {
+  left: 8rpx;
+}
+
+.shiba-face::after {
+  right: 8rpx;
+}
+
+.progress-track {
+  width: 100%;
+  height: 12rpx;
+  overflow: hidden;
+  border-radius: 999rpx;
+  background: #f0e0ca;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: #f28c28;
+}
+
+.danger-fill {
+  background: #202733;
+}

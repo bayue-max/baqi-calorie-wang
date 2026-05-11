@@ -1,0 +1,43 @@
+<view class="page login-page">
+  <view class="login-visual">
+    <image class="coach-main" src="/assets/coach/coach-whistle-clipboard.png" mode="aspectFit"></image>
+    <image class="coach-jump" src="/assets/coach/coach-jumprope.png" mode="aspectFit"></image>
+    <image class="coach-rice" src="/assets/coach/coach-rice.png" mode="aspectFit"></image>
+    <view class="spark-deco">✦</view>
+    <view class="bubble bubble-jump">
+      <text>会算热量，</text>
+      <text>也懂你每一餐！</text>
+    </view>
+    <view class="bubble bubble-food">
+      <text>吃得明白，</text>
+      <text>练得更帅！</text>
+    </view>
+  </view>
+
+  <view class="brand-block">
+    <text class="title">霸气卡路汪</text>
+    <text class="subtitle">会算热量的柴犬小教练，今天吃多少，霸气盯着你。</text>
+  </view>
+
+  <view class="login-actions" wx:if="{{!fullMode}}">
+    <button class="primary-button" bindtap="goHome">
+      <text>立即体验</text>
+    </button>
+  </view>
+
+  <view class="login-actions" wx:else>
+    <button class="primary-button login-button" bindtap="loginWithWechat" loading="{{loading}}">
+      <view class="wechat-mark"><view></view><view></view></view>
+      <text>微信登录</text>
+    </button>
+    <view class="agreement" bindtap="togglePrivacyAgree">
+      <view class="agreement-check {{privacyAgreed ? 'checked' : ''}}">
+        <text wx:if="{{privacyAgreed}}">✓</text>
+      </view>
+      <text>我已阅读并同意</text>
+      <text class="agreement-link" catchtap="openAgreement">《用户协议》</text>
+      <text>和</text>
+      <text class="agreement-link" catchtap="openPrivacy">《隐私政策》</text>
+    </view>
+  </view>
+</view>

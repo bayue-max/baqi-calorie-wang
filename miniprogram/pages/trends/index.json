@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "趋势统计",
+  "usingComponents": {
+    "trend-chart": "/components/trend-chart/index"
+  }
+}

@@ -1,0 +1,283 @@
+<view class="home-page" wx:if="{{!loading && summary}}">
+  <view class="home-hero">
+    <view class="hero-copy">
+      <text class="brand-name">霸气卡路汪</text>
+      <text class="coach-line">今天吃多少，霸气盯着你</text>
+    </view>
+    <view class="coach-medal">
+      <view class="hero-note-card">
+        <text></text>
+        <text></text>
+        <text></text>
+      </view>
+      <view class="hero-dumbbell">
+        <view></view>
+        <view></view>
+        <view></view>
+      </view>
+      <view class="hero-food-dot"></view>
+      <view class="hero-spark spark-one"></view>
+      <view class="hero-spark spark-two"></view>
+      <image class="coach-avatar-img" src="/assets/coach/coach-avatar.png" mode="aspectFit"></image>
+    </view>
+  </view>
+
+  <view class="nutrition-card">
+    <view class="calorie-area">
+      <view class="calorie-copy">
+        <text class="card-label">今日还可摄入</text>
+        <view class="calorie-line">
+          <text class="remaining-kcal">{{summary.remainingCalories}}</text>
+          <text class="kcal-unit">kcal</text>
+        </view>
+        <view class="food-progress-meta">
+          <text>{{summary.foodCalories}} / {{summary.dynamicTargetCalories}} kcal</text>
+          <text>{{summary.foodProgressPercent}}%</text>
+        </view>
+        <view class="home-progress">
+          <view class="home-progress-fill" style="width: {{summary.foodProgressWidth}};"></view>
+        </view>
+        <text class="target-line">基础代谢 {{summary.bmr}} kcal ｜ 建议摄入 {{summary.dynamicTargetCalories}} kcal</text>
+      </view>
+
+      <view class="coach-bubble">
+        <text>{{summary.coachText}}</text>
+      </view>
+      <view class="coach-large">
+        <image class="coach-body-img" src="/assets/coach/coach-body.png" mode="aspectFit"></image>
+      </view>
+    </view>
+
+    <view class="macro-strip">
+      <view class="macro-item protein">
+        <text class="macro-name">蛋白质</text>
+        <text class="macro-value">{{summary.proteinTotal}} / {{summary.dynamicProteinTarget}}g</text>
+        <view class="macro-track"><view class="macro-fill" style="width: {{summary.proteinProgressWidth}};"></view></view>
+        <text class="macro-percent">{{summary.proteinProgressPercent}}%</text>
+      </view>
+      <view class="macro-item carb">
+        <text class="macro-name">碳水</text>
+        <text class="macro-value">{{summary.carbTotal}} / {{summary.dynamicCarbTarget}}g</text>
+        <view class="macro-track"><view class="macro-fill" style="width: {{summary.carbProgressWidth}};"></view></view>
+        <text class="macro-percent">{{summary.carbProgressPercent}}%</text>
+      </view>
+      <view class="macro-item fat">
+        <text class="macro-name">脂肪</text>
+        <text class="macro-value">{{summary.fatTotal}} / {{summary.dynamicFatTarget}}g</text>
+        <view class="macro-track"><view class="macro-fill" style="width: {{summary.fatProgressWidth}};"></view></view>
+        <text class="macro-percent">{{summary.fatProgressPercent}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="records-shell">
+    <view class="records-title-row">
+      <text class="records-title">今日记录</text>
+      <view class="view-all" wx:if="{{records.length}}" bindtap="toggleRecordTable">
+        <text>{{showRecordTable ? '收起' : '查看全部'}}</text>
+        <image class="chevron-icon {{showRecordTable ? 'is-up' : ''}}" src="{{showRecordTable ? '/assets/icons/home/chevron-up.svg' : '/assets/icons/home/chevron-right.svg'}}" mode="aspectFit"></image>
+      </view>
+    </view>
+
+    <view wx:if="{{records.length && showRecordTable}}" class="record-table-wrap">
+      <scroll-view scroll-x class="record-table-scroll">
+        <view class="record-table">
+          <view class="table-row table-head">
+            <text class="cell meal-cell">餐次</text>
+            <text class="cell name-cell">名称</text>
+            <text class="cell amount-cell">数量/说明</text>
+            <text class="cell kcal-cell">热量</text>
+            <text class="cell macro-cell">蛋白</text>
+            <text class="cell macro-cell">碳水</text>
+            <text class="cell macro-cell">脂肪</text>
+            <text class="cell action-cell">操作</text>
+          </view>
+          <view class="table-row" wx:for="{{records}}" wx:key="_id">
+            <text class="cell meal-cell">{{item.displayMealType}}</text>
+            <text class="cell name-cell">{{item.displayName}}</text>
+            <text class="cell amount-cell">{{item.displayAmount}}</text>
+            <text class="cell kcal-cell">{{item.displayCalories}}</text>
+            <text class="cell macro-cell">{{item.displayProtein}}</text>
+            <text class="cell macro-cell">{{item.displayCarb}}</text>
+            <text class="cell macro-cell">{{item.displayFat}}</text>
+            <view class="cell action-cell">
+              <view class="table-delete" data-id="{{item._id}}" bindtap="deleteRecord">删除</view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view wx:elif="{{mealGroups.length || exerciseGroup}}">
+      <view class="record-group" wx:for="{{mealGroups}}" wx:key="key">
+        <view class="group-head">
+          <view class="group-name">
+            <image class="group-icon" src="{{item.icon}}" mode="aspectFit"></image>
+            <text>{{item.label}}</text>
+          </view>
+          <view class="group-calories">
+            <text>{{item.calories}} kcal</text>
+            <image class="chevron-icon orange" src="/assets/icons/home/chevron-up.svg" mode="aspectFit"></image>
+          </view>
+        </view>
+        <view class="record-row" wx:for="{{item.records}}" wx:for-item="food" wx:key="_id">
+          <view class="record-copy">
+            <text class="record-name">{{food.name}}</text>
+            <text class="record-amount">{{food.displayAmount}}</text>
+          </view>
+          <view class="record-stats">
+            <text class="record-kcal">{{food.displayCalories}}</text>
+            <view class="macro-tags">
+              <text class="p">P{{food.protein}}</text>
+              <text class="c">C{{food.carb}}</text>
+              <text class="f">F{{food.fat}}</text>
+            </view>
+          </view>
+          <button class="delete-link" data-id="{{food._id}}" bindtap="deleteRecord">
+            <image src="/assets/icons/home/delete.svg" mode="aspectFit"></image>
+          </button>
+        </view>
+      </view>
+
+      <view class="record-group exercise-group" wx:if="{{exerciseGroup}}">
+        <view class="group-head">
+          <view class="group-name">
+            <image class="group-icon" src="/assets/icons/home/exercise.svg" mode="aspectFit"></image>
+            <text>{{exerciseGroup.label}}</text>
+          </view>
+          <view class="group-calories">
+            <text>{{exerciseGroup.calories}} kcal</text>
+            <image class="chevron-icon orange" src="/assets/icons/home/chevron-up.svg" mode="aspectFit"></image>
+          </view>
+        </view>
+        <view class="record-row" wx:for="{{exerciseGroup.records}}" wx:for-item="exercise" wx:key="_id">
+          <view class="record-copy">
+            <text class="record-name">{{exercise.displayName}}</text>
+            <text class="record-amount">{{exercise.displayAmount}}</text>
+          </view>
+          <view class="record-stats">
+            <text class="record-kcal">{{exercise.displayCalories}}</text>
+          </view>
+          <button class="delete-link" data-id="{{exercise._id}}" bindtap="deleteRecord">
+            <image src="/assets/icons/home/delete.svg" mode="aspectFit"></image>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-records" wx:else>
+      <text>霸气还没看到记录。</text>
+      <text>先记一餐，今日进度会自动更新。</text>
+    </view>
+
+    <view class="quick-actions">
+      <button class="food-action" bindtap="openFoodModal">
+        <image class="action-icon" src="/assets/icons/home/action-food.svg" mode="aspectFit"></image>
+        <view>
+          <text class="action-title">记一餐</text>
+          <text class="action-subtitle">记录饮食摄入</text>
+        </view>
+      </button>
+      <button class="exercise-action" bindtap="openExerciseModal">
+        <image class="action-icon" src="/assets/icons/home/action-run.svg" mode="aspectFit"></image>
+        <view>
+          <text class="action-title">记运动</text>
+          <text class="action-subtitle">记录消耗热量</text>
+        </view>
+      </button>
+    </view>
+  </view>
+
+  <view class="food-modal-mask" wx:if="{{showFoodModal}}" catchtap="closeFoodModal">
+    <view class="food-modal" catchtap="noop">
+      <scroll-view class="food-modal-scroll" scroll-y>
+        <view class="food-modal-head">
+          <view class="food-modal-copy">
+            <text class="food-modal-title">记一餐</text>
+            <text class="food-modal-subtitle">把吃的告诉霸气，热量马上算。</text>
+          </view>
+          <image class="food-coach" src="/assets/coach/coach-drumstick.png" mode="aspectFit"></image>
+        </view>
+
+        <view class="food-form-block">
+          <text class="food-field-title">餐次</text>
+          <view class="food-meal-grid">
+            <button class="{{foodMealType === 'breakfast' ? 'active' : ''}}" data-value="breakfast" bindtap="selectFoodMeal">早餐</button>
+            <button class="{{foodMealType === 'lunch' ? 'active' : ''}}" data-value="lunch" bindtap="selectFoodMeal">午餐</button>
+            <button class="{{foodMealType === 'dinner' ? 'active' : ''}}" data-value="dinner" bindtap="selectFoodMeal">晚餐</button>
+            <button class="{{foodMealType === 'snack' ? 'active' : ''}}" data-value="snack" bindtap="selectFoodMeal">加餐</button>
+          </view>
+        </view>
+
+        <view class="food-form-block">
+          <text class="food-field-title">吃了什么</text>
+          <textarea class="food-input" value="{{foodRawInput}}" bindinput="updateFoodInput" placeholder="例如：鸡胸肉200g，米饭150g，鸡蛋2个" maxlength="300" auto-height />
+          <button class="food-parse-button" bindtap="parseFood" loading="{{foodParsing}}">解析预览</button>
+        </view>
+
+        <view class="food-form-block" wx:if="{{foodParsedItems.length || foodFailedItems.length}}">
+          <text class="food-field-title">解析结果</text>
+          <view class="food-parsed" wx:for="{{foodParsedItems}}" wx:key="rawSegment">
+            <view>
+              <text class="food-parsed-name">{{item.name}}</text>
+              <text class="food-parsed-amount">{{item.amount}}{{item.unit}}（{{item.gramEquivalent}}g）</text>
+            </view>
+            <text class="food-parsed-calorie">{{item.calories}} kcal</text>
+            <text class="food-parsed-macro">蛋白质 {{item.protein}}g · 碳水 {{item.carb}}g · 脂肪 {{item.fat}}g</text>
+            <text class="food-muted" wx:if="{{item.isDefaultAmount}}">默认份量 {{item.gramEquivalent}}g</text>
+            <!-- AI 分解：直接展示食材明细 -->
+            <view wx:if="{{item.fromAI && item.breakdown}}" class="breakdown-wrap">
+              <view wx:for="{{item.breakdown}}" wx:for-item="sub" wx:key="name" class="breakdown-item">
+                <text class="bd-name">{{sub.name}}</text>
+                <text class="bd-amount">{{sub.amount}}{{sub.unit}}</text>
+                <text wx:if="{{sub.estimated}}" class="bd-est">约</text>
+                <text class="bd-cal">{{sub.calories}}kcal</text>
+              </view>
+            </view>
+          </view>
+          <view wx:if="{{foodFailedItems.length}}" class="food-failed">
+            <text>未识别，暂未计入：{{foodFailedText}}</text>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="food-modal-actions">
+        <button class="food-cancel" bindtap="closeFoodModal">取消</button>
+        <button class="food-save" bindtap="saveFood" loading="{{foodSaving}}">确认添加</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="exercise-modal-mask" wx:if="{{showExerciseModal}}" catchtap="closeExerciseModal">
+    <view class="exercise-modal" catchtap="noop">
+      <view class="exercise-modal-head">
+        <view class="exercise-modal-copy">
+          <text class="exercise-modal-title">记运动</text>
+          <text class="exercise-modal-subtitle">消耗也算数，霸气给你抵扣。</text>
+        </view>
+        <image class="exercise-coach" src="/assets/coach/coach-lifter.png" mode="aspectFit"></image>
+      </view>
+
+      <view class="exercise-form-block">
+        <text class="exercise-field-title">运动强度</text>
+        <view class="exercise-option-grid">
+          <button class="{{exerciseIntensity === 'cardio' ? 'active' : ''}}" data-value="cardio" bindtap="selectExerciseIntensity">有氧</button>
+          <button class="{{exerciseIntensity === 'light_strength' ? 'active' : ''}}" data-value="light_strength" bindtap="selectExerciseIntensity">轻度力量</button>
+          <button class="{{exerciseIntensity === 'moderate_strength' ? 'active' : ''}}" data-value="moderate_strength" bindtap="selectExerciseIntensity">中度力量</button>
+          <button class="{{exerciseIntensity === 'heavy_strength' ? 'active' : ''}}" data-value="heavy_strength" bindtap="selectExerciseIntensity">重度力量</button>
+        </view>
+      </view>
+
+      <view class="exercise-form-block">
+        <text class="exercise-field-title">运动时长 min</text>
+        <input class="exercise-duration-input" type="number" value="{{exerciseDuration}}" bindinput="updateExerciseDuration" placeholder="45" />
+      </view>
+
+      <view class="exercise-modal-actions">
+        <button class="exercise-cancel" bindtap="closeExerciseModal">取消</button>
+        <button class="exercise-save" bindtap="saveExercise" loading="{{exerciseSaving}}">保存运动</button>
+      </view>
+    </view>
+  </view>
+
+</view>

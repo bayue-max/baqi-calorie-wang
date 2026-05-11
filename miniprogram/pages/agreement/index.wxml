@@ -1,0 +1,56 @@
+<view class="page legal-page">
+  <view class="legal-hero">
+    <text class="legal-title">用户协议</text>
+    <text class="legal-subtitle">欢迎使用霸气卡路汪。请在使用前阅读并理解以下内容。</text>
+    <text class="legal-date">更新日期：2026年5月3日</text>
+  </view>
+
+  <view class="legal-card">
+    <view class="section">
+      <text class="section-title">一、服务说明</text>
+      <text class="paragraph">霸气卡路汪是一款摄入热量记录小程序，用于帮助你记录饮食摄入、运动消耗、三大营养素和热量趋势。</text>
+      <text class="paragraph">本小程序提供的热量、基础代谢、目标摄入和营养素计算结果仅用于日常记录和自我管理参考，不构成医疗、诊断、治疗、营养处方或健身处方建议。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">二、账号与登录</text>
+      <text class="paragraph">你可以使用微信登录。使用微信登录时，小程序会根据微信开放能力识别你的登录身份，以便保存和同步你的记录。</text>
+      <text class="paragraph">请妥善保管你的微信账号和设备。如因你主动分享账号、设备或验证码导致的数据异常，由你自行承担相应影响。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">三、用户资料和记录</text>
+      <text class="paragraph">你可以在资料卡中填写昵称、性别、年龄、身高、体重和目标计划。小程序会基于这些信息生成热量计划。</text>
+      <text class="paragraph">你可以新增饮食、运动记录，也可以删除今日记录中的明细。请尽量输入真实、准确的信息，否则计算结果可能出现偏差。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">四、使用规则</text>
+      <text class="paragraph">你不得利用本小程序从事违法违规活动，不得尝试破坏、干扰、反向工程或绕过小程序、云函数和数据库的安全机制。</text>
+      <text class="paragraph">你不得上传、输入或传播违法、侵权、恶意、骚扰、欺诈或与本产品用途无关的内容。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">五、第三方服务</text>
+      <text class="paragraph">本小程序可能使用微信登录、微信云开发等基础能力。相关能力由微信及其关联服务提供方按照其规则提供。</text>
+      <text class="paragraph">因微信平台能力、网络、设备、系统版本或云服务异常导致的临时不可用，本小程序会尽力恢复，但不保证服务始终不中断。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">六、免责声明</text>
+      <text class="paragraph">本小程序中的食物热量和营养素解析基于内置数据和计算规则，可能存在误差。你应结合实际食品标签、烹饪方式和个人情况判断。</text>
+      <text class="paragraph">如你存在疾病、孕期、哺乳期、未成年、特殊饮食需求或正在接受医疗/营养干预，请先咨询专业人士。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">七、协议变更</text>
+      <text class="paragraph">我们可能根据产品功能、法律法规或平台要求更新本协议。更新后会在小程序内展示新的版本。</text>
+      <text class="paragraph">如你继续使用本小程序，即视为你已阅读并接受更新后的协议内容。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">八、联系我们</text>
+      <text class="paragraph">如果你对本协议或小程序使用有疑问，可以通过小程序内反馈入口或开发者提供的联系方式与我们联系。</text>
+    </view>
+  </view>
+</view>

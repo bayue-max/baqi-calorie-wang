@@ -1,0 +1,132 @@
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 660rpx;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 244, 0.86));
+}
+
+.chart-wrap.month-mode {
+  height: 2482rpx;
+}
+
+.chart-canvas {
+  width: 100%;
+  height: 602rpx;
+}
+
+.month-mode .chart-canvas {
+  height: 2424rpx;
+}
+
+.chart-top-labels {
+  display: flex;
+  align-items: center;
+}
+
+.chart-top-labels {
+  height: 58rpx;
+  padding: 0 4rpx;
+  box-sizing: border-box;
+  justify-content: space-between;
+  gap: 14rpx;
+  font-size: 22rpx;
+  font-weight: 900;
+}
+
+.axis-title {
+  flex: 0 0 auto;
+  color: #45536a;
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 0;
+  gap: 16rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  color: #45536a;
+  font-size: 19rpx;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.legend-line {
+  position: relative;
+  display: inline-block;
+  width: 34rpx;
+  height: 4rpx;
+  border-radius: 999rpx;
+}
+
+.legend-line::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: currentColor;
+}
+
+.legend-line.actual {
+  background: #ff6b10;
+  color: #ff6b10;
+}
+
+.legend-line.bmr {
+  background: repeating-linear-gradient(90deg, #7b4a24 0, #7b4a24 8rpx, transparent 8rpx, transparent 14rpx);
+}
+
+.legend-line.target {
+  background: repeating-linear-gradient(90deg, #ff6b10 0, #ff6b10 8rpx, transparent 8rpx, transparent 14rpx);
+}
+
+.legend-line.bmr::after,
+.legend-line.target::after {
+  display: none;
+}
+
+.legend-item:last-child {
+  color: #ff6b10;
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 10;
+  background: #202733;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  min-width: 240rpx;
+}
+
+.tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4rpx 0;
+}
+
+.tooltip-label {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.6);
+}
+
+.tooltip-val {
+  font-size: 22rpx;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.tooltip-val.bmr-color { color: #e0c8a8; }
+.tooltip-val.target-color { color: #ffaa55; }
+.tooltip-val.actual-color { color: #ff6b10; }

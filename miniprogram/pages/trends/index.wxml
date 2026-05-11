@@ -1,0 +1,38 @@
+<view class="page trends-page">
+  <view class="trend-hero">
+    <view class="trend-copy">
+      <text class="page-title">热量训练路线</text>
+      <text class="page-subtitle">像训练打卡一样，看见每天摄入变化。</text>
+    </view>
+    <image class="trend-coach" src="/assets/coach/coach-treadmill.png" mode="aspectFit"></image>
+    <text class="sparkle sparkle-one">✦</text>
+    <text class="sparkle sparkle-two">✦</text>
+  </view>
+
+  <view wx:if="{{stats}}" class="route-card">
+    <view class="route-head">
+      <view class="route-title-wrap">
+        <text class="route-icon">⌁</text>
+        <text class="route-title">{{mode === 'week' ? '7日训练路线图' : '30日训练路线图'}}</text>
+      </view>
+    </view>
+    <view class="mode-tabs">
+      <button class="{{mode === 'week' ? 'active' : ''}}" data-mode="week" bindtap="switchMode">近 7 天</button>
+      <button class="{{mode === 'month' ? 'active' : ''}}" data-mode="month" bindtap="switchMode">近 30 天</button>
+    </view>
+    <trend-chart
+      points="{{stats.points}}"
+      bmr="{{stats.bmr}}"
+      target-calories="{{stats.targetCalories}}"
+      total-burn-calories="{{stats.totalBurnCalories}}"
+      range="{{stats.range}}"
+      mode="{{mode}}"
+    />
+  </view>
+
+  <view wx:else class="empty-trends">
+    <text class="empty-title">登录后查看热量趋势</text>
+    <text class="empty-desc">记录饮食后，霸气帮你生成每日热量路线图。</text>
+  </view>
+
+</view>

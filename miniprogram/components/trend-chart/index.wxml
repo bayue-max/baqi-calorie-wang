@@ -1,0 +1,11 @@
+<view class="chart-wrap {{mode === 'month' ? 'month-mode' : 'week-mode'}}">
+  <view class="chart-top-labels">
+    <text class="axis-title">日期</text>
+    <view class="chart-legend">
+      <view class="legend-item"><text class="legend-line actual"></text><text>实际摄入</text></view>
+      <view class="legend-item"><text class="legend-line target"></text><text>建议摄入</text></view>
+      <view class="legend-item"><text class="legend-line bmr"></text><text>当日总消耗</text></view>
+    </view>
+  </view>
+  <canvas type="2d" id="trendCanvas" class="chart-canvas" bindtouchstart="onTouch" bindtouchmove="onTouch" bindtouchend="onTouchEnd"></canvas>
+</view>

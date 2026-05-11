@@ -1,0 +1,79 @@
+<view class="page profile-edit-page">
+  <view wx:if="{{loading}}" class="profile-edit-loading">
+    <image src="/assets/coach/coach-cheer.png" mode="aspectFit"></image>
+    <text>霸气正在读取资料...</text>
+  </view>
+
+  <block wx:else>
+  <view class="profile-edit-hero">
+    <view class="hero-copy">
+      <text class="page-title">设置目标</text>
+      <text class="page-subtitle">资料越准，霸气算得越狠。</text>
+    </view>
+    <image class="hero-coach" src="/assets/coach/coach-cheer.png" mode="aspectFit"></image>
+  </view>
+
+  <view class="panel section form-card">
+    <view class="card-head">
+      <text class="section-title">基本资料</text>
+      <text class="section-note">先让霸气认识你</text>
+    </view>
+
+    <view class="field">
+      <text class="label">昵称</text>
+      <input value="{{nickname}}" data-field="nickname" bindinput="updateField" placeholder="请输入昵称" />
+    </view>
+
+    <view class="field">
+      <text class="label">性别</text>
+      <view class="choice-grid two">
+        <button class="{{gender === 'male' ? 'active' : ''}}" data-field="gender" data-value="male" bindtap="selectOption">男</button>
+        <button class="{{gender === 'female' ? 'active' : ''}}" data-field="gender" data-value="female" bindtap="selectOption">女</button>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">年龄</text>
+      <input type="number" value="{{age}}" data-field="age" bindinput="updateField" placeholder="30" />
+    </view>
+  </view>
+
+  <view class="panel section form-card">
+    <view class="card-head">
+      <text class="section-title">身体数据</text>
+      <text class="section-note">热量计划靠它校准</text>
+    </view>
+
+    <view class="measure-grid">
+      <view class="field">
+        <text class="label">身高 cm</text>
+        <input type="digit" value="{{height}}" data-field="height" bindinput="updateField" placeholder="175" />
+      </view>
+      <view class="field">
+        <text class="label">体重 kg</text>
+        <input type="digit" value="{{weight}}" data-field="weight" bindinput="updateField" placeholder="72.5" />
+      </view>
+    </view>
+  </view>
+
+  <view class="panel section form-card">
+    <view class="card-head">
+      <text class="section-title">目标计划</text>
+      <text class="section-note">当天运动当天加算</text>
+    </view>
+
+    <view class="field">
+      <text class="label">目标</text>
+      <view class="choice-grid three">
+        <button class="{{goal === 'fat_loss' ? 'active' : ''}}" data-field="goal" data-value="fat_loss" bindtap="selectOption">减脂</button>
+        <button class="{{goal === 'maintain' ? 'active' : ''}}" data-field="goal" data-value="maintain" bindtap="selectOption">维持</button>
+        <button class="{{goal === 'muscle_gain' ? 'active' : ''}}" data-field="goal" data-value="muscle_gain" bindtap="selectOption">增肌</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="save-area">
+    <button class="primary-button save-button" bindtap="save" loading="{{saving}}">保存资料</button>
+  </view>
+  </block>
+</view>

@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="entry-hero">
+    <view>
+      <text class="page-title">记运动</text>
+      <text class="page-subtitle">消耗也算数，霸气给你抵扣。</text>
+    </view>
+    <view class="shiba-badge"><view class="shiba-face"></view></view>
+  </view>
+
+  <view class="panel section">
+    <text class="section-title">今天是否运动</text>
+    <view class="segmented">
+      <button class="{{exercised ? 'active' : ''}}" data-value="true" bindtap="setExercised">是</button>
+      <button class="{{!exercised ? 'active' : ''}}" data-value="false" bindtap="setExercised">否</button>
+    </view>
+  </view>
+
+  <view wx:if="{{exercised}}">
+    <view class="panel section">
+      <text class="section-title">运动强度</text>
+      <view class="option-grid">
+        <button class="{{intensity === 'cardio' ? 'active' : ''}}" data-value="cardio" bindtap="selectIntensity">有氧</button>
+        <button class="{{intensity === 'light_strength' ? 'active' : ''}}" data-value="light_strength" bindtap="selectIntensity">轻度力量</button>
+        <button class="{{intensity === 'moderate_strength' ? 'active' : ''}}" data-value="moderate_strength" bindtap="selectIntensity">中度力量</button>
+        <button class="{{intensity === 'heavy_strength' ? 'active' : ''}}" data-value="heavy_strength" bindtap="selectIntensity">重度力量</button>
+      </view>
+    </view>
+
+    <view class="panel section">
+      <text class="section-title">运动时长 min</text>
+      <input type="number" value="{{duration}}" bindinput="updateDuration" placeholder="45" />
+    </view>
+  </view>
+
+  <button class="primary-button submit-button" bindtap="submit" loading="{{saving}}">保存运动</button>
+</view>

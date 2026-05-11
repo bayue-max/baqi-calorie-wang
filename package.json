@@ -1,0 +1,12 @@
+{
+  "name": "calorie-miniapp-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "jest --runInBand --passWithNoTests",
+    "test:logic": "jest tests --runInBand --passWithNoTests"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

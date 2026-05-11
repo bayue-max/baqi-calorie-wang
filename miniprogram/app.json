@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/login/index",
+    "pages/agreement/index",
+    "pages/privacy/index",
+    "pages/profile-edit/index",
+    "pages/home/index",
+    "pages/profile/index",
+    "pages/trends/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "霸气卡路汪",
+    "navigationBarBackgroundColor": "#fff7ec",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#fff7ec"
+  },
+  "tabBar": {
+    "color": "#aaa6a2",
+    "selectedColor": "#ff7a10",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页",
+        "iconPath": "assets/icons/tabbar/nav-home.png",
+        "selectedIconPath": "assets/icons/tabbar/nav-home-active.png"
+      },
+      {
+        "pagePath": "pages/trends/index",
+        "text": "趋势",
+        "iconPath": "assets/icons/tabbar/nav-trend.png",
+        "selectedIconPath": "assets/icons/tabbar/nav-trend-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "assets/icons/tabbar/nav-user.png",
+        "selectedIconPath": "assets/icons/tabbar/nav-user-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

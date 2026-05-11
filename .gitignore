@@ -1,0 +1,10 @@
+node_modules/
+miniprogram_npm/
+.superpowers/
+.DS_Store
+npm-debug.log*
+
+# API Key 本地配置文件（部署时随云函数上传，不要提交到 Git）
+cloudfunctions/decomposeDish/config.local.js
+backup/
+cloudfunctions/parseFoodInput/decomposeDishKey.js

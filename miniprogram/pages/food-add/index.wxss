@@ -1,0 +1,140 @@
+.entry-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8rpx 0 24rpx;
+}
+
+.page-title {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 900;
+}
+
+.page-subtitle {
+  display: block;
+  margin-top: 8rpx;
+  color: #7b6957;
+  font-size: 25rpx;
+}
+
+.segmented {
+  display: flex;
+  gap: 12rpx;
+}
+
+.segmented button {
+  flex: 1;
+  font-size: 26rpx;
+  background: #fff7ec;
+}
+
+button.active {
+  background: #f28c28;
+  color: #ffffff;
+}
+
+textarea {
+  width: 100%;
+  min-height: 260rpx;
+  padding: 18rpx;
+  box-sizing: border-box;
+  background: #fffaf2;
+  border: 1rpx solid #f0dfc9;
+  border-radius: 14rpx;
+  color: #202733;
+  font-size: 30rpx;
+}
+
+.input-panel button {
+  margin-top: 18rpx;
+  background: #202733;
+  color: #fff7ec;
+}
+
+.parsed {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #f1e7d9;
+}
+
+.parsed-name {
+  margin-right: 12rpx;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.parsed-amount,
+.parsed-macro {
+  color: #7b6957;
+  font-size: 24rpx;
+}
+
+.parsed-calorie {
+  color: #202733;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.failed {
+  margin-top: 16rpx;
+  color: #b42318;
+}
+
+.submit-button {
+  height: 88rpx;
+  font-size: 30rpx;
+}
+
+/* AI 分解食材明细 */
+.breakdown-toggle {
+  margin-top: 8rpx;
+  color: #f28c28;
+  font-size: 24rpx;
+}
+
+.bd-toggle-text {
+  color: #f28c28;
+  font-size: 24rpx;
+}
+
+.breakdown-list {
+  margin-top: 6rpx;
+  padding: 10rpx 16rpx;
+  background: #fffaf2;
+  border-radius: 10rpx;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 6rpx 0;
+  font-size: 24rpx;
+  color: #7b6957;
+}
+
+.bd-name {
+  flex: 1;
+  font-weight: 600;
+  color: #202733;
+}
+
+.bd-amount {
+  min-width: 60rpx;
+  text-align: right;
+}
+
+.bd-est {
+  color: #f28c28;
+  font-size: 22rpx;
+}
+
+.bd-cal {
+  min-width: 72rpx;
+  text-align: right;
+  color: #202733;
+  font-weight: 600;
+}
