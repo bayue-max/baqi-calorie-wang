@@ -20,7 +20,10 @@
   </view>
 
   <view class="plan-card" wx:if="{{plan}}">
-    <text class="plan-title">热量计划</text>
+    <view class="plan-title-row">
+      <text class="plan-title">热量计划</text>
+      <text class="formula-link" bindtap="toggleFormula">计算公式</text>
+    </view>
     <view class="plan-main">
       <text>建议摄入</text>
       <text>{{plan.targetCalories}} kcal</text>
@@ -48,4 +51,43 @@
     <text>修改资料</text>
   </button>
   <text class="profile-footer">每一次更新，都是更好的自己！</text>
+</view>
+
+<view class="formula-overlay" wx:if="{{showFormula}}" bindtap="toggleFormula">
+  <view class="formula-modal">
+    <text class="formula-modal-title">每日摄入计算方案</text>
+    <scroll-view class="formula-scroll" scroll-y>
+      <view class="formula-section">
+        <text class="formula-heading">基础代谢（Mifflin-St Jeor 公式）</text>
+        <text class="formula-item">男性：10 × 体重 + 6.25 × 身高 - 5 × 年龄 + 5</text>
+        <text class="formula-item">女性：10 × 体重 + 6.25 × 身高 - 5 × 年龄 - 161</text>
+      </view>
+      <view class="formula-section">
+        <text class="formula-heading">总消耗（TDEE）</text>
+        <text class="formula-item">基础代谢 × 1.2（静坐少动系数）</text>
+      </view>
+      <view class="formula-section">
+        <text class="formula-heading">目标热量</text>
+        <text class="formula-item">减脂：TDEE - 350 kcal</text>
+        <text class="formula-item">维持：TDEE</text>
+        <text class="formula-item">增肌：TDEE + 250 kcal</text>
+      </view>
+      <view class="formula-section">
+        <text class="formula-heading">蛋白质目标（调整体重法）</text>
+        <text class="formula-item">理想体重：男 (身高 - 100) × 0.9，女 (身高 - 100) × 0.85</text>
+        <text class="formula-item">调整体重 = 理想体重 + 超出部分的 40%</text>
+        <text class="formula-item">蛋白体重取调整体重与当前体重一半的较大值</text>
+        <text class="formula-item">减脂：蛋白体重 × 2.0g · 维持 × 1.6g · 增肌 × 1.8g</text>
+      </view>
+      <view class="formula-section">
+        <text class="formula-heading">脂肪目标</text>
+        <text class="formula-item">目标热量 × 25% ÷ 9</text>
+      </view>
+      <view class="formula-section">
+        <text class="formula-heading">碳水目标</text>
+        <text class="formula-item">（目标热量 - 蛋白 × 4 - 脂肪 × 9）÷ 4</text>
+      </view>
+    </scroll-view>
+    <text class="formula-close" catchtap="toggleFormula">我知道了</text>
+  </view>
 </view>

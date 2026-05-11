@@ -10,24 +10,36 @@ Component({
 
   observers: {
     'points,bmr,targetCalories,totalBurnCalories,range,mode': function () {
-      this.draw()
+      if (this._drawReady) this.draw()
     }
   },
 
   lifetimes: {
     ready() {
-      this.draw()
+      this._drawReady = false
       this._pointPositions = []
+      setTimeout(() => {
+        this._drawReady = true
+        this.draw()
+      }, 400)
     }
   },
 
   methods: {
     draw() {
+      if (!this._drawReady) return
+      if (this._drawing) { this._redrawNeeded = true; return }
+      this._drawing = true
+      this._redrawNeeded = false
       var that = this
       const query = this.createSelectorQuery()
       query.select('#trendCanvas').fields({ node: true, size: true }).exec(function(res) {
+        that._drawing = false
         const canvasInfo = res[0]
-        if (!canvasInfo || !canvasInfo.node) return
+        if (!canvasInfo || !canvasInfo.node) {
+          if (that._redrawNeeded) that.draw()
+          return
+        }
         const canvas = canvasInfo.node
         const ctx = canvas.getContext('2d')
         const win = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync()
@@ -38,6 +50,7 @@ Component({
         that._canvasWidth = canvasInfo.width
         that._canvasHeight = canvasInfo.height
         that.drawChart(ctx, canvasInfo.width, canvasInfo.height)
+        if (that._redrawNeeded) that.draw()
       })
     },
 

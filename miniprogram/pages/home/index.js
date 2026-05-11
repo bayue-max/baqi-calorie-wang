@@ -177,6 +177,21 @@ Page({
       mealGroups: this.groupMealRecords(data.records),
       exerciseGroup: this.groupExerciseRecords(data.records)
     })
+    this.prefetchOtherPages()
+  },
+
+  prefetchOtherPages() {
+    const userId = getApp().globalData.userId
+    if (!userId) return
+    api.getProfile({ userId }).then(data => {
+      setPageCache('profile', data)
+    }).catch(() => {})
+    api.getStats({ userId, mode: 'week' }).then(stats => {
+      setPageCache('stats:week', stats)
+    }).catch(() => {})
+    api.getStats({ userId, mode: 'month' }).then(stats => {
+      setPageCache('stats:month', stats)
+    }).catch(() => {})
   },
 
   normalizeRecords(records) {

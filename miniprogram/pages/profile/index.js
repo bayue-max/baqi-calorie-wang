@@ -14,7 +14,7 @@ const COACH_PROFILE = {
 }
 
 Page({
-  data: { user: null, plan: null, display: null, loading: true },
+  data: { user: null, plan: null, display: null, loading: true, showFormula: false },
 
   onShow() { this.load() },
 
@@ -57,6 +57,10 @@ Page({
       fatNote: plan ? '按建议摄入 25% 计算' : '',
       carbNote: plan ? '按剩余热量计算' : ''
     }
+  },
+
+  toggleFormula() {
+    this.setData({ showFormula: !this.data.showFormula })
   },
 
   edit() {

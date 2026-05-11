@@ -98,7 +98,10 @@ function calculateUserPlan(profile) {
     : 10 * profile.weight + 6.25 * profile.height - 5 * profile.age - 161
   const tdeeRaw = bmrRaw * dailyActivityFactor
   const targetRaw = tdeeRaw + adjustmentMap[profile.goal]
-  const proteinRaw = profile.weight * proteinMap[profile.goal]
+  const idealWeight = profile.gender === 'male' ? (profile.height - 100) * 0.9 : (profile.height - 100) * 0.85
+  const adjustedWeight = idealWeight + 0.4 * Math.max(0, profile.weight - idealWeight)
+  const proteinWeight = Math.max(adjustedWeight, profile.weight * 0.5)
+  const proteinRaw = proteinWeight * proteinMap[profile.goal]
   const fatRaw = targetRaw * 0.25 / 9
   const carbRaw = (targetRaw - proteinRaw * 4 - fatRaw * 9) / 4
   return {

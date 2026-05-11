@@ -11,7 +11,7 @@ function calculateBmr(profile) {
 }
 
 function calculateUserPlan(profile) {
-  const { goal, weight } = profile
+  const { gender, goal, height, weight } = profile
   const bmrRaw = calculateBmr(profile)
   const activityFactor = DAILY_ACTIVITY_FACTOR
   const calorieAdjustment = GOAL_ADJUSTMENT_MAP[goal]
@@ -24,9 +24,14 @@ function calculateUserPlan(profile) {
     throw new Error(`Unsupported protein goal: ${goal}`)
   }
 
+  // 大基数用户用调整体重（标准体重 + 40%超出部分），避免蛋白超标
+  var idealWeight = gender === 'male' ? (height - 100) * 0.9 : (height - 100) * 0.85
+  var adjustedWeight = idealWeight + 0.4 * Math.max(0, weight - idealWeight)
+  var proteinWeight = Math.max(adjustedWeight, weight * 0.5)
+
   const tdeeRaw = bmrRaw * activityFactor
   const targetCaloriesRaw = tdeeRaw + calorieAdjustment
-  const proteinTargetRaw = weight * proteinFactor
+  const proteinTargetRaw = Math.round(proteinWeight * proteinFactor)
   const fatTargetRaw = targetCaloriesRaw * 0.25 / 9
   const carbTargetRaw = (targetCaloriesRaw - proteinTargetRaw * 4 - fatTargetRaw * 9) / 4
 

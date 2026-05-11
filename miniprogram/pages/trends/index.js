@@ -10,14 +10,8 @@ Page({
     loading: true
   },
 
-  onLoad() {
-    this.load()
-  },
-
   onShow() {
-    if (getApp().globalData.userId) {
-      this.load()
-    }
+    this.load()
   },
 
   async load() {
@@ -25,13 +19,11 @@ Page({
     const cached = getPageCache(cacheKey, STATS_CACHE_TTL)
     if (cached) {
       this.setData({ stats: cached, loading: false })
-    } else {
-      this.setData({ loading: true })
     }
 
     try {
       if (!getApp().globalData.userId) {
-        this.setData({ loading: false })
+        if (!cached) this.setData({ loading: false })
         return
       }
       const stats = await api.getStats({
@@ -39,13 +31,9 @@ Page({
         mode: this.data.mode
       })
       setPageCache(cacheKey, stats)
-      this.setData({
-        stats,
-        loading: false
-      })
+      this.setData({ stats, loading: false })
     } catch (error) {
-      this.setData({ loading: false })
-      wx.showToast({ title: error.message || '加载失败', icon: 'none' })
+      if (!cached) this.setData({ loading: false })
     }
   },
 

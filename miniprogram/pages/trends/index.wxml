@@ -29,10 +29,9 @@
       mode="{{mode}}"
     />
   </view>
-
   <view wx:else class="empty-trends">
-    <text class="empty-title">登录后查看热量趋势</text>
-    <text class="empty-desc">记录饮食后，霸气帮你生成每日热量路线图。</text>
+    <text class="empty-title">{{loading ? '加载中...' : '登录后查看热量趋势'}}</text>
+    <text wx:if="{{!loading}}" class="empty-desc">记录饮食后，霸气帮你生成每日热量路线图。</text>
   </view>
 
 </view>

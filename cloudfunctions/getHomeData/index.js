@@ -1,3 +1,4 @@
+// v2 — 调整体重蛋白公式
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
