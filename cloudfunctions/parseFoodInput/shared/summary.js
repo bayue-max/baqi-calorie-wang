@@ -14,7 +14,7 @@ function calculateDailySummary(records, userPlan) {
   const dynamicTargetCalories = Math.round(userPlan.targetCalories + exerciseBurn)
   const netCalories = Math.round(foodCalories - exerciseBurn)
   const dynamicProteinTarget = Math.round(userPlan.proteinTarget)
-  const dynamicFatTarget = Math.round(userPlan.fatTarget)
+  const dynamicFatTarget = Math.round(dynamicTargetCalories * 0.25 / 9)
   const dynamicCarbTarget = Math.round(
     (dynamicTargetCalories - dynamicProteinTarget * 4 - dynamicFatTarget * 9) / 4
   )

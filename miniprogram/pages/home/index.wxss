@@ -341,6 +341,7 @@
   filter: drop-shadow(0 20rpx 34rpx rgba(61, 38, 16, 0.12));
 }
 
+
 .macro-strip {
   display: flex;
   position: relative;
@@ -722,6 +723,33 @@
   box-shadow: 0 14rpx 28rpx rgba(255, 122, 16, 0.18);
 }
 
+.exercise-tab-bar {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 22rpx;
+}
+
+.ex-tab {
+  flex: 1;
+  height: 64rpx;
+  margin: 0;
+  padding: 0;
+  border: 2rpx solid #e8d9c3;
+  border-radius: 16rpx;
+  background: #fffaf4;
+  color: #8f6e4e;
+  font-size: 26rpx;
+  font-weight: 800;
+  line-height: 64rpx;
+}
+
+.ex-tab.active {
+  border-color: #c25e1a;
+  background: #fff7ed;
+  color: #c25e1a;
+  font-weight: 900;
+}
+
 .exercise-action {
   border: 1rpx solid rgba(239, 219, 195, 0.96);
   background: rgba(255, 255, 255, 0.86);
@@ -1091,4 +1119,13 @@
   text-align: right;
   color: #202733;
   font-weight: 600;
+}
+
+.food-ai-note {
+  display: block;
+  margin-top: 6rpx;
+  color: #c49a6c;
+  font-size: 21rpx;
+  font-weight: 500;
+  line-height: 1.45;
 }

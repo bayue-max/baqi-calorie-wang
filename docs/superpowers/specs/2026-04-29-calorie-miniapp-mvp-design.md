@@ -1,7 +1,7 @@
 # Calorie Miniapp MVP Design
 
-Date: 2026-04-29
-Status: Design approved in conversation; written spec pending user review
+Date: 2026-04-29 | Updated: 2026-05-19
+Status: Design approved; spec updated to reflect implemented code
 Target platform: WeChat Mini Program
 Implementation direction: Native WeChat Mini Program + WeChat Cloud Development
 
@@ -13,7 +13,7 @@ Build an MVP WeChat mini program for calorie intake tracking. The product helps 
 2. Complete basic profile.
 3. Generate daily calorie and macronutrient targets.
 4. Record food by meal using one text input.
-5. Parse multiple foods automatically against a seed food library.
+5. Parse multiple foods via three-layer engine (rule → cooking → AI decomposition).
 6. Record exercise and add burned calories to today's dynamic target.
 7. View today's progress, nutrition progress, and records.
 8. View weekly/monthly calorie intake trends on a separate trend page.
@@ -25,116 +25,102 @@ The MVP does not include daily weight logs, weight trend charts, photo recogniti
 | Topic | Decision |
 |---|---|
 | Delivery model | Native WeChat Mini Program + WeChat Cloud Development |
-| Formal login | WeChat phone-number authorization is the official login path |
+| Formal login | WeChat phone-number authorization + "立即体验" skip mode for review compliance |
 | Development/experience mode | Support both local mock data and a cloud test user |
-| Food parsing | Rule parsing + simple correction, no AI parsing in MVP |
+| Food parsing | Three-layer engine: Rule Engine → Cooking Method Detection → DeepSeek AI Decomposition. Dual database: 520 basic foods + 386 composite dishes |
+| AI caching | DB-persisted `dish_cache` with 30-day TTL; low-confidence results not cached; count-unit scaling (个/只/份) |
 | Record correction | Food and exercise records support edit and delete |
-| Today's record UI | Use a horizontal table as described in the PRD |
-| Food library | Seed 100-200 common foods in the cloud database |
-| Chart | Separate trend page; weekly/monthly food intake line with BMR and target lines |
+| Food recording UI | Single modal on Home page (not a separate page) |
+| Exercise recording UI | Single modal on Home page with tab-based type selection (有氧 8 types / 力量 3 types) |
+| Food library | 520 basic foods + 386 composite dishes (906 total) loaded as local JSON in cloud function |
+| Chart | Separate trend page; canvas 2D with touch tooltip, dual baseline, week/month modes |
 | Frontend stack | Native WXML/WXSS/JS |
 | Date scope | MVP only allows recording Beijing-time today |
 | Timezone | Asia/Shanghai |
-| Home priority | Prioritize consumed/target progress |
+| Home priority | Prioritize consumed/target progress; background prefetch profile + trends data |
 
 ## 3. Page Structure
 
-The MVP contains seven pages after scope clarification:
+The MVP contains five pages + two modals:
 
-| Page | Path Example | Responsibility |
+| Page | Path | Responsibility |
 |---|---|---|
-| Login | `/pages/login/index` | WeChat phone login, cloud test-user login, local mock entry for development |
+| Login | `/pages/login/index` | Dual-mode: WeChat phone login + "立即体验" skip |
 | Profile Edit | `/pages/profile-edit/index` | First-time profile completion and later profile editing |
-| Home | `/pages/home/index` | Today's progress, nutrition progress, today's record table |
-| Food Add | `/pages/food-add/index` | Meal selection, one text input, parse preview, confirm add |
-| Exercise Add | `/pages/exercise-add/index` | Exercise intensity and duration recording |
-| Profile | `/pages/profile/index` | User profile, current calorie plan, edit entry |
-| Trends | `/pages/trends/index` | Weekly/monthly calorie intake chart |
+| Home | `/pages/home/index` | Today's progress, nutrition bars, records, food/exercise modals |
+| Profile | `/pages/profile/index` | User profile, calorie plan, formula explanation popup |
+| Trends | `/pages/trends/index` | Weekly/monthly calorie chart with canvas touch interaction |
 
-Home is intentionally lean. It does not show the trend chart or full calorie plan. Trend analysis belongs to the Trends page. BMR, habit burn, calorie adjustment, target calories, and macronutrient targets belong to the Profile page.
+Food recording and exercise recording are **modals inside Home**, not separate pages. This reduces navigation steps and keeps the user on the main screen.
+
+### Additional pages
+
+| Page | Path | Responsibility |
+|---|---|---|
+| Agreement | `/pages/agreement/index` | Privacy policy (WeChat review requirement) |
+| Privacy | `/pages/privacy/index` | Privacy settings |
 
 ## 4. Home Design
 
-Home contains only:
+Home contains:
 
-1. Today's progress.
-2. Nutrition progress.
-3. Today's record table.
+1. **Coach area** — Shiba inu mascot, motivational text bubble, calorie progress ring.
+2. **Nutrition progress bars** — Protein / Carb / Fat with target vs consumed, percentage fill.
+3. **Today's record list** — Grouped by meal (breakfast/lunch/dinner/snack) + exercise group.
+4. **Quick actions** — "记一餐" and "记运动" buttons open modals.
 
-Today's progress shows:
+### Food recording modal
 
-- Food calories consumed / dynamic target calories.
-- Remaining calories.
-- Today's exercise burn when greater than 0.
+- Meal type selector (早餐/午餐/晚餐/加餐).
+- Single text input for food description.
+- "解析预览" button calls `parseFoodInput`.
+- Preview shows parsed items with name, amount, calories, macros.
+- AI-decomposed items show total calories only (breakdown hidden).
+- "确认添加" saves and refreshes.
 
-Nutrition progress shows:
+### Exercise recording modal
 
-- Protein consumed / dynamic protein target.
-- Fat consumed / dynamic fat target.
-- Carbohydrate consumed / dynamic carbohydrate target.
+- Tab bar: 有氧 | 力量.
+- 有氧 grid (2 columns): 快走, 椭圆机, 骑行, 慢跑, 游泳, 跑步机爬坡, HIIT, 跳绳.
+- 力量 grid (2 columns): 轻度力量, 中度力量, 重度力量.
+- Duration input (minutes).
+- Cancel / Save buttons.
 
-Today's record table:
+### Background prefetch
 
-- Uses a horizontal table on mobile.
-- Columns: meal type, name, amount/description, calories, protein, fat, carbohydrate, actions.
-- Food and exercise records can be edited and deleted.
-- The system rows "daily summary" and "remaining" are fixed at the bottom and cannot be edited or deleted.
-- Exercise records show negative calories and `-` for macronutrients.
-- The first column should remain readable while horizontally scrolling if feasible in mini program layout.
+After Home data loads, the page fires background API calls to pre-warm caches for Profile and Trends pages. Switching tabs feels instant.
 
 ## 5. Profile And Plan
 
-Profile fields:
+### Profile fields
 
 | Field | Required | Notes |
 |---|---:|---|
-| Avatar | No | Use default male/female avatar if empty |
 | Nickname | Yes | Displayed in profile |
 | Gender | Yes | Male/female |
 | Age | Yes | Used for BMR |
 | Height | Yes | cm |
-| Weight | Yes | kg; only used for calculation in MVP |
-| Exercise habit | Yes | No exercise, cardio, light strength, moderate strength, heavy strength |
-| Goal | Yes | Muscle gain, fat loss, maintain |
+| Weight | Yes | kg |
+| Goal | Yes | 减脂 / 维持 / 增肌 |
 
-When profile is saved:
+Note: Exercise habit was removed from the profile. TDEE uses a fixed activity factor of 1.2 (sedentary) for all users. Individual exercise is tracked daily instead.
 
-1. Validate required fields.
-2. Save user profile.
-3. Recalculate `user_plan` if any calculation-affecting field changed.
-4. Refresh today's summary targets if needed.
-5. Return to Home or Profile depending on entry point.
+### Formula popup
 
-Fields that trigger plan recalculation:
-
-- Gender.
-- Age.
-- Height.
-- Weight.
-- Exercise habit.
-- Goal.
-
-Nickname and avatar do not trigger plan recalculation.
+Profile page "热量计划" title has a clickable "计算公式" link that opens a centered modal explaining all calculation formulas.
 
 ## 6. Trends Page
 
-The Trends page shows the calorie intake chart that was originally in Home.
-
-Chart rules:
-
-- Default view: current Beijing-time natural week, Monday to Sunday.
-- Toggle: current week / current month.
-- Line: daily food intake calories only.
-- Baseline 1: BMR.
-- Baseline 2: target calories from current `user_plan`.
-- Exercise burn is not subtracted from the trend line.
-- Historical plan changes are not backfilled in MVP; the chart uses the current plan baselines.
+- Default view: current Beijing-time week.
+- Toggle: 7-day / 30-day.
+- Canvas 2D chart with touch tooltip (tap near a point to see date, total burn, target, actual intake).
+- Lines: actual food intake (solid orange), suggested intake (dashed orange), daily total burn (dashed brown).
+- 400ms draw delay on first render to avoid overlap during page transition.
+- Cache-first rendering: shows cached data instantly, refreshes in background.
 
 ## 7. Data Model
 
 ### 7.1 `users`
-
-Add an account type so formal users and development users can share the same app flows.
 
 ```json
 {
@@ -142,15 +128,11 @@ Add an account type so formal users and development users can share the same app
   "accountType": "official",
   "phone": "13800000000",
   "openid": "wechat_openid",
-  "unionid": "wechat_unionid",
-  "avatarUrl": "",
-  "defaultAvatarType": "male",
   "nickname": "八月",
   "gender": "male",
   "age": 30,
   "height": 175,
   "weight": 72.5,
-  "exerciseHabit": "moderate_strength",
   "goal": "fat_loss",
   "profileCompleted": true,
   "createdAt": 1710000000000,
@@ -158,30 +140,23 @@ Add an account type so formal users and development users can share the same app
 }
 ```
 
-`accountType` values:
-
-- `official`: WeChat phone-number user.
-- `test`: Cloud test user.
-- `mock`: Local-only development data. It is not stored in the cloud database.
-
 ### 7.2 `user_plan`
-
-Stores the current effective plan for a user.
 
 ```json
 {
   "_id": "plan_id",
   "userId": "user_id",
-  "bmr": 1650,
-  "activityFactor": 1.5,
-  "tdee": 2475,
-  "habitBurn": 825,
+  "bmr": 1520,
+  "activityFactor": 1.2,
+  "tdee": 1824,
+  "dailyActivityBurn": 304,
+  "habitBurn": 304,
   "goal": "fat_loss",
-  "calorieAdjustment": -500,
-  "targetCalories": 1975,
-  "proteinTarget": 145,
-  "fatTarget": 55,
-  "carbTarget": 210,
+  "calorieAdjustment": -350,
+  "targetCalories": 1474,
+  "proteinTarget": 140,
+  "fatTarget": 41,
+  "carbTarget": 136,
   "createdAt": 1710000000000,
   "updatedAt": 1710000000000
 }
@@ -189,264 +164,202 @@ Stores the current effective plan for a user.
 
 ### 7.3 `foods`
 
-Seed 100-200 common fitness and diet-control foods.
+Seed JSON loaded locally in `parseFoodInput` cloud function (520 items). Not queried from database.
 
 ```json
 {
-  "_id": "food_id",
+  "_id": "food_chicken_breast_raw",
   "name": "鸡胸肉",
-  "alias": ["鸡胸", "鸡胸肉", "鸡肉"],
+  "alias": ["鸡胸", "鸡胸肉", "鸡肉", "白肉", "鸡脯肉"],
   "state": "raw",
   "defaultUnit": "g",
+  "defaultWeight": 200,
   "caloriesPer100g": 120,
   "proteinPer100g": 23,
   "fatPer100g": 2.5,
   "carbPer100g": 0,
-  "unitConversions": {
-    "g": 1,
-    "份": 100
-  },
+  "unitConversions": { "g": 1, "克": 1, "份": 100 },
   "priority": 10,
-  "enabled": true,
-  "createdAt": 1710000000000,
-  "updatedAt": 1710000000000
+  "enabled": true
 }
 ```
 
-Food matching rules:
+### 7.4 `composite_dishes`
 
-- Prefer enabled foods.
-- Match exact name and alias first.
-- Use simple fuzzy matching only when one high-confidence result exists.
-- If several foods are plausible, do not guess unless priority and state make one result unambiguous.
-- For same food with multiple states, prefer raw/unprocessed entries unless the food is inherently a prepared item such as rice, milk, banana, egg, or oats.
+386 pre-computed composite dishes with nutrition per serving.
 
-### 7.4 `daily_records`
+### 7.5 `daily_records`
 
-Food and exercise share one collection.
+Food and exercise share one collection. Same structure as original design.
 
-Food example:
+### 7.6 `daily_summary`
+
+Same structure as original design, with one change: `dynamicFatTarget` is now recalculated as `dynamicTargetCalories × 25% ÷ 9`, keeping fat proportional when exercise increases the calorie budget.
+
+### 7.7 `dish_cache` (new)
+
+AI decomposition cache. Persisted in cloud database, 30-day TTL.
 
 ```json
 {
-  "_id": "record_id",
-  "userId": "user_id",
-  "date": "2026-04-29",
-  "recordType": "food",
-  "recordGroupId": "group_id",
-  "mealType": "lunch",
-  "foodId": "food_id",
-  "name": "鸡胸肉",
-  "rawInput": "鸡胸肉200g，米饭150g，鸡蛋2个",
-  "amount": 200,
-  "unit": "g",
-  "gramEquivalent": 200,
-  "isDefaultAmount": false,
-  "calories": 240,
-  "protein": 46,
-  "fat": 5,
-  "carb": 0,
-  "createdAt": 1710000000000,
-  "updatedAt": 1710000000000
+  "_id": "去皮鸡腿",
+  "dishName": "去皮鸡腿",
+  "confidence": "medium",
+  "totalCalories": 180,
+  "totalProtein": 27,
+  "totalFat": 8,
+  "totalCarb": 0,
+  "ingredients": [
+    { "name": "鸡腿肉", "weight": 150, "unit": "g" }
+  ],
+  "servingSize": { "amount": 1, "unit": "个", "totalGrams": 150 },
+  "expiresAt": 1781258750846,
+  "createdAt": 1778666750846,
+  "updatedAt": 1778666750846
 }
 ```
 
-Exercise example:
-
-```json
-{
-  "_id": "record_id",
-  "userId": "user_id",
-  "date": "2026-04-29",
-  "recordType": "exercise",
-  "mealType": "exercise",
-  "name": "中度力量训练 45min",
-  "exerciseIntensity": "moderate_strength",
-  "duration": 45,
-  "calories": -252,
-  "protein": 0,
-  "fat": 0,
-  "carb": 0,
-  "createdAt": 1710000000000,
-  "updatedAt": 1710000000000
-}
-```
-
-MVP only allows creating, editing, and deleting records for Beijing-time today.
-
-### 7.5 `daily_summary`
-
-Stores the recalculated daily snapshot for Home and Trends.
-
-```json
-{
-  "_id": "summary_id",
-  "userId": "user_id",
-  "date": "2026-04-29",
-  "bmr": 1650,
-  "targetCalories": 1975,
-  "exerciseBurn": 252,
-  "dynamicTargetCalories": 2227,
-  "foodCalories": 980,
-  "netCalories": 728,
-  "proteinTotal": 82,
-  "fatTotal": 34,
-  "carbTotal": 95,
-  "dynamicProteinTarget": 145,
-  "dynamicFatTarget": 55,
-  "dynamicCarbTarget": 285,
-  "remainingCalories": 1247,
-  "remainingProtein": 63,
-  "remainingFat": 21,
-  "remainingCarb": 190,
-  "updatedAt": 1710000000000
-}
-```
+Cache read flow: memory (30min TTL) → DB (30-day TTL) → AI call.
+Low-confidence results (`confidence: "low"`) are not written to DB.
 
 ## 8. Cloud Functions
 
 | Function | Responsibility |
 |---|---|
-| `loginByWechatPhone` | Formal WeChat phone login/register, returns profile completion state |
+| `loginByWechatPhone` | Formal WeChat phone login/register |
 | `loginAsTestUser` | Development/experience cloud test-user login |
-| `saveProfile` | Save profile and recalculate user plan when needed |
-| `getProfile` | Return profile and current plan for Profile page |
-| `getHomeData` | Return today's progress, nutrition progress, records, and summary |
-| `parseFoodInput` | Parse and preview food input without writing records |
-| `addFoodRecords` | Persist confirmed parsed food records and recalculate today's summary |
-| `addExerciseRecord` | Add exercise record and recalculate today's summary |
-| `updateRecord` | Update today's food/exercise record and recalculate summary |
-| `deleteRecord` | Delete today's record and recalculate summary |
-| `recalculateDailySummary` | Shared recalculation function used by write operations |
-| `getStats` | Return weekly/monthly chart data for Trends page |
+| `saveProfile` | Save profile, calculate plan with adjusted-weight protein formula, upsert daily summary |
+| `getProfile` | Return profile; recalculate plan on each call (inline formula) |
+| `getHomeData` | Return today's user, plan, records, and calculated summary |
+| `parseFoodInput` | Parse food input through three-layer engine; AI cache read/write; count-unit scaling; load foods/composite_dishes from local JSON |
+| `addFoodRecords` | Persist food records, recalculate daily summary, upsert plan if needed |
+| `addExerciseRecord` | Calculate exercise burn (11 types), persist, recalculate summary |
+| `updateRecord` | Update today's record, recalculate summary |
+| `deleteRecord` | Delete today's record, recalculate summary |
+| `getStats` | Return weekly/monthly chart data with date range and summary points |
 
-Core calculation logic lives in cloud-function shared modules. The frontend should not duplicate BMR, target, food nutrition, exercise burn, or daily summary calculations.
+Key change: `saveProfile` and `getProfile` both inline the plan calculation formula rather than relying on `shared/plan.js`, to ensure deployment reliability.
 
-## 9. Food Recording Flow
+## 9. Food Parsing Architecture
 
-Food Add page flow:
+### Three-layer engine
 
-1. User selects meal type: breakfast, lunch, dinner, or snack.
-2. User enters one or more foods in a single text field.
-3. Page calls `parseFoodInput`.
-4. Page shows a parse preview with recognized foods, default quantity markers, and unrecognized items.
-5. User confirms.
-6. Page calls `addFoodRecords`.
-7. Cloud function persists records and recalculates `daily_summary`.
-8. User returns to Home.
+1. **Layer 1 — Rule Engine**: Match against 520 basic foods by name/alias. Supports multi-food comma/space separation, unit extraction (g/克/ml/毫升/个/只/份/碗/盘/杯/勺…), cooking method prefix handling.
+2. **Layer 2 — Cooking Method Detection**: 15 cooking methods with oil estimates and water gain factors.
+3. **Layer 3 — AI Decomposition (DeepSeek)**: For unrecognized dishes (e.g., "红烧肉", "无糖拿铁"). AI returns ingredients + total nutrition. Results cached in `dish_cache`.
 
-Supported units:
+### AI fallback nutrition
 
-- `g`, `克`.
-- `kg`, `千克`.
-- `ml`.
-- `个`.
-- `根`.
-- `份`.
+When AI returns ingredient names not in the local food database, per-100g nutrition is estimated by keyword matching:
 
-Default quantity rule:
+| Keywords | kcal/100g | Example |
+|---|---|---|
+| 奶/乳 | 60 | 全脂牛奶 |
+| 油/脂 | 800 | 亚麻籽油 |
+| 米/面/粉/饼/饭/粥 | 200 | 米粉 |
+| 肉/排/腿/翅/蹄/肘/肝 | 150 | 猪肉 |
+| 酱/料/汤/汁/卤/膏 | 80 | 麻酱 |
+| 菜/蔬/菇/瓜/叶/花/椒/葱/姜/蒜 | 30 | 冬瓜 |
+| 茶/咖啡/饮料/酒/啤 | 5 | 浓缩咖啡 |
+| (none) | 100 | 兜底 |
 
-- If no quantity is provided, use 100g.
-- Mark the record with `isDefaultAmount = true`.
+### Cache deduplication
 
-Failure rules:
+All number+unit combos are stripped from the cache key. "去皮鸡腿1个", "1个去皮鸡腿", "去皮鸡腿2个" all normalize to key `去皮鸡腿`.
 
-- Partial failure: save recognized foods after user confirmation and show unrecognized items as not counted.
-- Full failure: do not save and ask user to change food names.
+### Count-unit scaling
 
-## 10. Exercise Recording Flow
+When cache is hit with a different count (e.g., "去皮鸡腿2个" vs cached "1个"), `servingSize` is used to compute per-unit grams and scale ingredients proportionally.
 
-Exercise Add page fields:
+## 10. Exercise Recording
 
-- Whether exercised today.
-- Exercise intensity: cardio, light strength, moderate strength, heavy strength.
-- Duration in minutes.
+### Types and coefficients
 
-If the user selects "no exercise", no record is created.
+Exercise burn = coefficient × weight(kg) × duration(min).
 
-Exercise burn formula:
+**有氧:**
 
-```text
-exercise burn = per-minute coefficient * weight kg * duration minutes
-```
+| Type | Key | Coefficient | 62kg/30min |
+|---|---|---|---|
+| 快走 | brisk_walk | 0.06 | ~112 |
+| 椭圆机 | elliptical | 0.08 | ~149 |
+| 骑行 | cycling | 0.11 | ~205 |
+| 慢跑 | jogging | 0.13 | ~242 |
+| 游泳 | swimming | 0.13 | ~242 |
+| 跑步机爬坡 | treadmill_climb | 0.15 | ~279 |
+| HIIT | hiit | 0.16 | ~298 |
+| 跳绳 | jump_rope | 0.19 | ~353 |
 
-Coefficients:
+**力量:**
 
-| Intensity | Coefficient |
-|---|---:|
-| Cardio | 0.09 |
-| Light strength | 0.06 |
-| Moderate strength | 0.08 |
-| Heavy strength | 0.10 |
-
-Exercise is stored as a negative-calorie record. It increases today's dynamic calorie target.
+| Type | Key | Coefficient | 62kg/30min |
+|---|---|---|---|
+| 轻度力量 | light_strength | 0.04 | ~74 |
+| 中度力量 | moderate_strength | 0.05 | ~93 |
+| 重度力量 | heavy_strength | 0.07 | ~130 |
 
 ## 11. Calculation Rules
 
-BMR:
+### BMR (Mifflin-St Jeor)
 
-```text
-male = 10 * weight + 6.25 * height - 5 * age + 5
-female = 10 * weight + 6.25 * height - 5 * age - 161
+```
+male   = 10 × weight + 6.25 × height - 5 × age + 5
+female = 10 × weight + 6.25 × height - 5 × age - 161
 ```
 
-Activity factors:
+### TDEE
 
-| Habit | Factor |
-|---|---:|
-| No exercise | 1.20 |
-| Cardio | 1.35 |
-| Light strength | 1.40 |
-| Moderate strength | 1.50 |
-| Heavy strength | 1.65 |
+```
+TDEE = BMR × 1.2 (fixed sedentary factor)
+```
 
-Goal adjustments:
+### Goal adjustments
 
 | Goal | Adjustment |
 |---|---:|
-| Fat loss | -500 kcal |
+| Fat loss | -350 kcal |
 | Maintain | 0 kcal |
 | Muscle gain | +250 kcal |
 
-Protein:
+### Protein (adjusted body weight formula)
 
-| Goal | Protein |
-|---|---:|
-| Fat loss | 2.0g * weight kg |
-| Maintain | 1.6g * weight kg |
-| Muscle gain | 1.8g * weight kg |
+Uses ideal body weight to prevent excessive protein for large-framed users and insufficient protein for underweight users.
 
-Fat:
+```
+idealWeight = male   ? (height - 100) × 0.9
+              female ? (height - 100) × 0.85
 
-```text
-fatTarget = targetCalories * 25% / 9
+adjustedWeight = idealWeight + 0.4 × max(0, weight - idealWeight)
+proteinWeight  = max(adjustedWeight, weight × 0.5)
+
+proteinTarget = proteinWeight × factor
+  fat_loss:    2.0
+  maintain:    1.6
+  muscle_gain: 1.8
 ```
 
-Carbohydrate:
+### Fat
 
-```text
-carbTarget = (targetCalories - proteinTarget * 4 - fatTarget * 9) / 4
+```
+fatTarget = targetCalories × 25% ÷ 9
 ```
 
-After exercise:
+### Carbohydrate
 
-```text
+```
+carbTarget = (targetCalories - proteinTarget × 4 - fatTarget × 9) ÷ 4
+```
+
+### After exercise (dynamic targets)
+
+```
 dynamicTargetCalories = targetCalories + exerciseBurn
-dynamicProteinTarget = proteinTarget
-dynamicFatTarget = fatTarget
-dynamicCarbTarget = (dynamicTargetCalories - proteinTarget * 4 - fatTarget * 9) / 4
+dynamicProteinTarget = proteinTarget (unchanged)
+dynamicFatTarget      = dynamicTargetCalories × 25% ÷ 9 (proportional)
+dynamicCarbTarget     = (dynamicTargetCalories - dynamicProteinTarget × 4 - dynamicFatTarget × 9) ÷ 4
 ```
 
-Daily summary:
-
-```text
-foodCalories = sum(food record calories)
-exerciseBurn = abs(sum(exercise record calories))
-netCalories = foodCalories - exerciseBurn
-remainingCalories = dynamicTargetCalories - foodCalories
-```
-
-Macronutrient totals count only food records.
+Note: `dynamicFatTarget` was changed from using a static `plan.fatTarget` to a dynamic calculation. This keeps macronutrient ratios balanced when exercise increases the calorie budget.
 
 ## 12. Date Rules
 
@@ -455,21 +368,21 @@ Macronutrient totals count only food records.
 - MVP only allows recording Beijing-time today.
 - Current week is Monday to Sunday.
 - Current month is the natural Beijing-time month.
-- When a user opens Home after midnight, the app reads the new date. If no summary exists, the backend returns an empty-record default summary based on the current plan.
 
 ## 13. Error Handling
 
 | Scenario | Behavior |
 |---|---|
-| User refuses phone authorization | Stay on Login and show retry prompt |
+| User refuses phone authorization | Show "立即体验" skip option |
 | Formal user has incomplete profile | Redirect to Profile Edit |
-| User has no plan | Ask user to save profile again |
-| Food library is empty | Food Add cannot submit and shows library-not-ready message |
+| User has no plan | Recalculate from user profile |
+| Food library is empty | (not applicable — loaded from local JSON) |
 | Food parse partial failure | Show failed items and allow adding successful items |
 | Food parse full failure | Do not add records |
+| AI decomposition timeout (3s) | Return null, item not added |
 | Cloud function failure | Preserve current input and show retry prompt |
 | Edit/delete non-today records | Reject in MVP |
-| Profile edit changes today's plan | Recalculate today's summary targets; records stay unchanged |
+| Profile edit changes today's plan | Recalculate today's summary targets |
 
 ## 14. Acceptance Criteria
 
@@ -477,56 +390,36 @@ Macronutrient totals count only food records.
 
 - New official user can authorize phone, create account, and enter Profile Edit.
 - Returning official user enters Home when profile is complete.
-- Test user login can enter the same flows without phone authorization.
+- "立即体验" skip mode works without phone authorization.
 - Required profile fields block save when empty.
-- Saving complete profile generates `user_plan`.
+- Saving complete profile generates `user_plan` with adjusted-weight protein formula.
 - Editing weight or goal recalculates plan.
-- Editing nickname or avatar does not recalculate plan.
 
 ### Food Recording
 
-- `鸡胸肉200g` creates one food record after preview and confirmation.
+- `鸡胸肉200g` creates one food record.
 - `鸡胸肉200g，米饭150g，鸡蛋2个` creates three records.
-- `鸡胸肉` uses default 100g and marks the default quantity.
-- Meal type comes from the selected meal, even if text contains a meal word.
-- Partial failure saves recognized foods and reports unrecognized foods.
-- Full failure saves nothing.
+- `鸡胸肉` uses default weight from food library.
+- AI decomposes unrecognized dishes (e.g., `红烧肉200g`).
+- Second user input of same dish hits `dish_cache` — no AI call.
+- Different count (2个 vs 1个) correctly scales via `servingSize`.
 
 ### Exercise Recording
 
-- Selecting no exercise creates no record.
-- Moderate strength 45min for a 70kg user creates a `-252 kcal` exercise record.
-- Exercise increases today's dynamic target.
-- Exercise does not change protein or fat targets; extra calories go to carbohydrate target.
+- 有氧 tab shows 8 types, 力量 tab shows 3 types.
+- Moderate strength 30min for 62kg user creates ~93 kcal exercise record.
+- Exercise increases today's dynamic calorie target.
+- Protein target unchanged; fat target scales proportionally with dynamic target.
 
 ### Home
 
-- Home shows only today's progress, nutrition progress, and today's record table.
-- Food/exercise add, edit, and delete refresh Home.
-- System summary rows are visible and cannot be edited or deleted.
-- Table remains usable on small mobile screens through horizontal scrolling.
+- Home shows coach mascot, progress, nutrition bars, records.
+- Food and exercise modals open/close smoothly.
+- Background prefetch warms Profile and Trends page caches.
 
 ### Trends
 
 - Trends defaults to current week.
-- User can switch to current month.
-- Chart line shows food intake calories.
-- BMR and target calorie baselines are shown.
-
-## 15. Risks And Mitigations
-
-| Risk | Mitigation |
-|---|---|
-| WeChat phone authorization may be hard to test during development | Provide local mock and cloud test-user entry |
-| Food auto-matching may miscount food | Use preview-confirm flow and only auto-match high-confidence results |
-| Seed food quality affects perceived accuracy | Seed 100-200 high-frequency foods and aliases before MVP testing |
-| Horizontal table may be dense on small screens | Use horizontal scrolling, compact columns, and readable system rows |
-| Calculation mismatch between frontend and backend | Keep all core calculations in cloud shared modules |
-| Profile change can shift today's target unexpectedly | Recalculate summary targets but keep record details unchanged |
-
-## 16. Implementation Notes For Later Planning
-
-- Initialize `.superpowers/` in `.gitignore` before code work if the project becomes a git repository.
-- Create seed food data before validating Food Add.
-- Treat mock mode as a development capability, not a formal product path.
-- Write focused tests for plan calculation, food parsing, exercise burn, and daily summary recalculation.
+- Chart shows food intake line, BMR baseline, target baseline.
+- Touch shows date tooltip with details.
+- Cache-first: second visit shows chart instantly.

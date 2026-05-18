@@ -130,7 +130,7 @@ function calculateDailySummary(items, plan) {
   const exerciseBurn = Math.abs(Math.round(exerciseRecords.reduce((total, record) => total + Number(record.calories || 0), 0)))
   const dynamicTargetCalories = plan.targetCalories + exerciseBurn
   const dynamicProteinTarget = plan.proteinTarget
-  const dynamicFatTarget = plan.fatTarget
+  const dynamicFatTarget = Math.round(dynamicTargetCalories * 0.25 / 9)
   const dynamicCarbTarget = Math.round((dynamicTargetCalories - dynamicProteinTarget * 4 - dynamicFatTarget * 9) / 4)
   return {
     bmr: plan.bmr,
@@ -331,16 +331,16 @@ function parseFoodInputCore(rawInput, foodList) {
 }
 
 function calculateExerciseBurn({ weight, intensity, duration }) {
-  const map = { cardio: 0.09, light_strength: 0.06, moderate_strength: 0.08, heavy_strength: 0.1 }
+  const map = { brisk_walk: 0.06, elliptical: 0.08, cycling: 0.11, jogging: 0.13, swimming: 0.13, treadmill_climb: 0.15, hiit: 0.16, jump_rope: 0.19, light_strength: 0.04, moderate_strength: 0.05, heavy_strength: 0.07 }
   return Math.round(map[intensity] * weight * duration)
 }
 
 function buildExerciseRecordName(intensity, duration) {
   const map = {
-    cardio: '有氧',
-    light_strength: '轻度力量训练',
-    moderate_strength: '中度力量训练',
-    heavy_strength: '重度力量训练'
+    brisk_walk: '快走', elliptical: '椭圆机', cycling: '骑行',
+    jogging: '慢跑', swimming: '游泳', treadmill_climb: '跑步机爬坡',
+    hiit: 'HIIT', jump_rope: '跳绳',
+    light_strength: '轻度力量训练', moderate_strength: '中度力量训练', heavy_strength: '重度力量训练'
   }
   return `${map[intensity]} ${duration}min`
 }

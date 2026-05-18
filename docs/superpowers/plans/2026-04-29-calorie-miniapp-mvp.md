@@ -1,6 +1,14 @@
 # Calorie Miniapp MVP Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Status: HISTORICAL** — Last updated 2026-05-19. This document describes the original implementation plan. The actual implementation has diverged significantly. See `docs/superpowers/specs/2026-04-29-calorie-miniapp-mvp-design.md` for the current design. Key divergences:
+> - Food parsing added AI layer (DeepSeek) with DB caching
+> - Food/exercise recording moved from separate pages to Home modals
+> - Profile dropped `exerciseHabit`; activity factor fixed at 1.2
+> - Calorie gap changed -500→-350; protein uses adjusted weight formula
+> - Exercise coefficients expanded from 4 to 11 types
+> - Dynamic fat target recalculated proportionally
+> - `dish_cache` collection for AI result persistence
+> - Test files (`tests/`) have outdated expected values
 
 **Goal:** Build the confirmed calorie tracking WeChat Mini Program MVP with login, profile, calorie plan, food/exercise records, daily summary, and trends.
 

@@ -225,15 +225,6 @@
             <text class="food-parsed-calorie">{{item.calories}} kcal</text>
             <text class="food-parsed-macro">蛋白质 {{item.protein}}g · 碳水 {{item.carb}}g · 脂肪 {{item.fat}}g</text>
             <text class="food-muted" wx:if="{{item.isDefaultAmount}}">默认份量 {{item.gramEquivalent}}g</text>
-            <!-- AI 分解：直接展示食材明细 -->
-            <view wx:if="{{item.fromAI && item.breakdown}}" class="breakdown-wrap">
-              <view wx:for="{{item.breakdown}}" wx:for-item="sub" wx:key="name" class="breakdown-item">
-                <text class="bd-name">{{sub.name}}</text>
-                <text class="bd-amount">{{sub.amount}}{{sub.unit}}</text>
-                <text wx:if="{{sub.estimated}}" class="bd-est">约</text>
-                <text class="bd-cal">{{sub.calories}}kcal</text>
-              </view>
-            </view>
           </view>
           <view wx:if="{{foodFailedItems.length}}" class="food-failed">
             <text>未识别，暂未计入：{{foodFailedText}}</text>
@@ -248,34 +239,49 @@
     </view>
   </view>
 
-  <view class="exercise-modal-mask" wx:if="{{showExerciseModal}}" catchtap="closeExerciseModal">
-    <view class="exercise-modal" catchtap="noop">
-      <view class="exercise-modal-head">
-        <view class="exercise-modal-copy">
-          <text class="exercise-modal-title">记运动</text>
-          <text class="exercise-modal-subtitle">消耗也算数，霸气给你抵扣。</text>
+  <view class="food-modal-mask" wx:if="{{showExerciseModal}}" catchtap="closeExerciseModal">
+    <view class="food-modal" catchtap="noop">
+      <scroll-view class="food-modal-scroll" scroll-y>
+        <view class="food-modal-head">
+          <view class="food-modal-copy">
+            <text class="food-modal-title">记运动</text>
+            <text class="food-modal-subtitle">消耗也算数，霸气给你抵扣。</text>
+          </view>
+          <image class="food-coach" src="/assets/coach/coach-lifter.png" mode="aspectFit"></image>
         </view>
-        <image class="exercise-coach" src="/assets/coach/coach-lifter.png" mode="aspectFit"></image>
-      </view>
 
-      <view class="exercise-form-block">
-        <text class="exercise-field-title">运动强度</text>
-        <view class="exercise-option-grid">
-          <button class="{{exerciseIntensity === 'cardio' ? 'active' : ''}}" data-value="cardio" bindtap="selectExerciseIntensity">有氧</button>
-          <button class="{{exerciseIntensity === 'light_strength' ? 'active' : ''}}" data-value="light_strength" bindtap="selectExerciseIntensity">轻度力量</button>
-          <button class="{{exerciseIntensity === 'moderate_strength' ? 'active' : ''}}" data-value="moderate_strength" bindtap="selectExerciseIntensity">中度力量</button>
-          <button class="{{exerciseIntensity === 'heavy_strength' ? 'active' : ''}}" data-value="heavy_strength" bindtap="selectExerciseIntensity">重度力量</button>
+        <view class="food-form-block">
+          <text class="food-field-title">运动类型</text>
+          <view class="exercise-tab-bar">
+            <button class="ex-tab {{exerciseTab === 'cardio' ? 'active' : ''}}" data-value="cardio" bindtap="selectExerciseTab">有氧</button>
+            <button class="ex-tab {{exerciseTab === 'strength' ? 'active' : ''}}" data-value="strength" bindtap="selectExerciseTab">力量</button>
+          </view>
+          <view class="food-meal-grid" wx:if="{{exerciseTab === 'cardio'}}">
+            <button class="{{exerciseIntensity === 'brisk_walk' ? 'active' : ''}}" data-value="brisk_walk" bindtap="selectExerciseIntensity">快走</button>
+            <button class="{{exerciseIntensity === 'elliptical' ? 'active' : ''}}" data-value="elliptical" bindtap="selectExerciseIntensity">椭圆机</button>
+            <button class="{{exerciseIntensity === 'cycling' ? 'active' : ''}}" data-value="cycling" bindtap="selectExerciseIntensity">骑行</button>
+            <button class="{{exerciseIntensity === 'jogging' ? 'active' : ''}}" data-value="jogging" bindtap="selectExerciseIntensity">慢跑</button>
+            <button class="{{exerciseIntensity === 'swimming' ? 'active' : ''}}" data-value="swimming" bindtap="selectExerciseIntensity">游泳</button>
+            <button class="{{exerciseIntensity === 'treadmill_climb' ? 'active' : ''}}" data-value="treadmill_climb" bindtap="selectExerciseIntensity">跑步机爬坡</button>
+            <button class="{{exerciseIntensity === 'hiit' ? 'active' : ''}}" data-value="hiit" bindtap="selectExerciseIntensity">HIIT</button>
+            <button class="{{exerciseIntensity === 'jump_rope' ? 'active' : ''}}" data-value="jump_rope" bindtap="selectExerciseIntensity">跳绳</button>
+          </view>
+          <view class="food-meal-grid" wx:if="{{exerciseTab === 'strength'}}">
+            <button class="{{exerciseIntensity === 'light_strength' ? 'active' : ''}}" data-value="light_strength" bindtap="selectExerciseIntensity">轻度力量</button>
+            <button class="{{exerciseIntensity === 'moderate_strength' ? 'active' : ''}}" data-value="moderate_strength" bindtap="selectExerciseIntensity">中度力量</button>
+            <button class="{{exerciseIntensity === 'heavy_strength' ? 'active' : ''}}" data-value="heavy_strength" bindtap="selectExerciseIntensity">重度力量</button>
+          </view>
         </view>
-      </view>
 
-      <view class="exercise-form-block">
-        <text class="exercise-field-title">运动时长 min</text>
-        <input class="exercise-duration-input" type="number" value="{{exerciseDuration}}" bindinput="updateExerciseDuration" placeholder="45" />
-      </view>
+        <view class="food-form-block">
+          <text class="food-field-title">运动时长 min</text>
+          <input class="exercise-duration-input" type="number" value="{{exerciseDuration}}" bindinput="updateExerciseDuration" placeholder="45" />
+        </view>
+      </scroll-view>
 
-      <view class="exercise-modal-actions">
-        <button class="exercise-cancel" bindtap="closeExerciseModal">取消</button>
-        <button class="exercise-save" bindtap="saveExercise" loading="{{exerciseSaving}}">保存运动</button>
+      <view class="food-modal-actions">
+        <button class="food-cancel" bindtap="closeExerciseModal">取消</button>
+        <button class="food-save" bindtap="saveExercise" loading="{{exerciseSaving}}">保存运动</button>
       </view>
     </view>
   </view>

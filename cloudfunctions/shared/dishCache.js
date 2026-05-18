@@ -9,6 +9,7 @@
  */
 
 const MEMORY_CACHE_TTL = 30 * 60 * 1000 // 30 分钟
+const DB_CACHE_TTL = 30 * 24 * 60 * 60 * 1000 // 30 天
 
 /**
  * 简易内存缓存（进程级，单次云函数调用内共享）
@@ -48,9 +49,14 @@ function setMemoryCache(dishName, data) {
 async function getDishCache(db, dishName) {
   try {
     const result = await db.collection('dish_cache').doc(dishName).get()
-    return result.data || null
+    if (!result.data) return null
+    // 过期检查
+    if (result.data.expiresAt && Date.now() > result.data.expiresAt) {
+      db.collection('dish_cache').doc(dishName).remove().catch(() => {})
+      return null
+    }
+    return result.data
   } catch (e) {
-    // 文档不存在或网络错误
     return null
   }
 }
@@ -62,32 +68,25 @@ async function getDishCache(db, dishName) {
  * @param {object} data - { dishName, confidence, oilIncluded, ingredients, ... }
  */
 async function setDishCache(db, dishName, data) {
+  var now = Date.now()
+  // 尝试更新已有文档
   try {
-    const now = Date.now()
-    const existing = await db.collection('dish_cache').doc(dishName).get()
-    if (existing.data) {
-      await db.collection('dish_cache').doc(dishName).update({
-        data: { ...data, hitCount: db.command.inc(1), updatedAt: now }
-      })
-    } else {
-      await db.collection('dish_cache').add({
-        data: { _id: dishName, ...data, hitCount: 1, createdAt: now, updatedAt: now }
-      })
-    }
+    await db.collection('dish_cache').doc(dishName).update({
+      data: { ...data, hitCount: db.command.inc(1), updatedAt: now, expiresAt: now + DB_CACHE_TTL }
+    })
+    return
   } catch (e) {
-    // 集合不存在 → 自动创建后重试
+    // 文档不存在或集合不存在，走新增
     if (e.message && e.message.includes('Collection does not exist')) {
-      try {
-        await db.createCollection('dish_cache')
-        // 创建成功后重试写入
-        await db.collection('dish_cache').add({
-          data: { _id: dishName, ...data, hitCount: 1, createdAt: Date.now(), updatedAt: Date.now() }
-        })
-        return
-      } catch (createErr) {
-        console.warn('[dishCache] createCollection failed:', createErr.message)
-      }
+      try { await db.createCollection('dish_cache') } catch (_) {}
     }
+  }
+  // 新增文档
+  try {
+    await db.collection('dish_cache').add({
+      data: { _id: dishName, ...data, hitCount: 1, createdAt: now, updatedAt: now, expiresAt: now + DB_CACHE_TTL }
+    })
+  } catch (e) {
     console.warn('[dishCache] write failed:', dishName, e.message)
   }
 }

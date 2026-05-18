@@ -13,10 +13,17 @@ const PROTEIN_FACTOR_MAP = {
 }
 
 const EXERCISE_BURN_COEFFICIENT_MAP = {
-  cardio: 0.09,
-  light_strength: 0.06,
-  moderate_strength: 0.08,
-  heavy_strength: 0.1
+  brisk_walk: 0.06,
+  elliptical: 0.08,
+  cycling: 0.11,
+  jogging: 0.13,
+  swimming: 0.13,
+  treadmill_climb: 0.15,
+  hiit: 0.16,
+  jump_rope: 0.19,
+  light_strength: 0.04,
+  moderate_strength: 0.05,
+  heavy_strength: 0.07
 }
 
 module.exports = {

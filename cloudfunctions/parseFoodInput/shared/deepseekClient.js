@@ -14,10 +14,15 @@ const HTTP_TIMEOUT = 2400
 const DECOMPOSE_PROMPT = `分解菜品为食材+总营养，返回JSON：
 {"dishName":"菜名","totalCalories":600,"totalProtein":18,"totalFat":22,"totalCarb":80,"confidence":"high","oilIncluded":true,"servingEstimate":false,"ingredients":[{"name":"食材","weight":200,"unit":"g"}]}
 
-规则：1~6种核心食材，食材输出name/weight/unit/calories/protein/fat/carb。total营养为整道菜估算（含酱料调料）。有克重/数量以此为基准，无则设servingEstimate=true。用英语字段名。
+规则：
+1. 1~6种核心食材，每个输出name/weight/unit/calories/protein/fat/carb。unit固定为"g"，weight必须是克数。
+2. 遇到"个/只/根/份/碗/盘/杯/勺/片/块/条/包"等非克重单位时，先估算单份克重再换算。如去皮鸡腿1个≈150g→weight填150；鸡蛋1个≈50g→weight填50。
+3. 总热量/总蛋白/总脂肪/总碳水为整道菜估算（含酱料调料）。按换算后的克重计算。
+4. 用户未提供克重或数量时，设servingEstimate=true。用英语字段名。
 
 示例：
-红烧肉200g→{"dishName":"红烧肉","totalCalories":880,"totalProtein":26,"totalFat":84,"totalCarb":0,"confidence":"high","oilIncluded":true,"servingEstimate":false,"ingredients":[{"name":"五花肉","weight":200,"unit":"g"},{"name":"食用油","weight":10,"unit":"g"}]}`
+红烧肉200g→{"dishName":"红烧肉","totalCalories":880,"totalProtein":26,"totalFat":84,"totalCarb":0,"confidence":"high","oilIncluded":true,"servingEstimate":false,"ingredients":[{"name":"五花肉","weight":200,"unit":"g"},{"name":"食用油","weight":10,"unit":"g"}]}
+去皮鸡腿2个→{"dishName":"去皮鸡腿","totalCalories":360,"totalProtein":54,"totalFat":16,"totalCarb":0,"confidence":"high","oilIncluded":false,"servingEstimate":false,"ingredients":[{"name":"鸡腿肉","weight":300,"unit":"g"}]}`
 
 /**
  * HTTPS POST 请求封装

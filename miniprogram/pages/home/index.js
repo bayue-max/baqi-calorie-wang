@@ -122,10 +122,12 @@ Page({
     foodParsedItems: [],
     foodFailedItems: [],
     foodFailedText: '',
+    foodHasAI: false,
     foodParsing: false,
     foodSaving: false,
     showExerciseModal: false,
-    exerciseIntensity: 'moderate_strength',
+    exerciseTab: 'cardio',
+    exerciseIntensity: 'jogging',
     exerciseDuration: '',
     exerciseSaving: false
   },
@@ -304,7 +306,8 @@ Page({
       foodRawInput: '',
       foodParsedItems: [],
       foodFailedItems: [],
-      foodFailedText: ''
+      foodFailedText: '',
+      foodHasAI: false
     })
   },
 
@@ -336,7 +339,8 @@ Page({
       this.setData({
         foodParsedItems: result.items,
         foodFailedItems: result.failed,
-        foodFailedText: result.failed.join('、')
+        foodFailedText: result.failed.join('、'),
+        foodHasAI: result.items.some(function(item) { return item.fromAI })
       })
     } catch (error) {
       wx.showToast({ title: error.message || '解析失败', icon: 'none' })
@@ -382,7 +386,8 @@ Page({
   openExerciseModal() {
     this.setData({
       showExerciseModal: true,
-      exerciseIntensity: 'moderate_strength',
+      exerciseTab: 'cardio',
+      exerciseIntensity: 'jogging',
       exerciseDuration: ''
     })
   },
@@ -393,6 +398,12 @@ Page({
   },
 
   noop() {},
+
+  selectExerciseTab(event) {
+    var tab = event.currentTarget.dataset.value
+    var defaultIntensity = tab === 'cardio' ? 'jogging' : 'moderate_strength'
+    this.setData({ exerciseTab: tab, exerciseIntensity: defaultIntensity })
+  },
 
   selectExerciseIntensity(event) {
     this.setData({ exerciseIntensity: event.currentTarget.dataset.value })
